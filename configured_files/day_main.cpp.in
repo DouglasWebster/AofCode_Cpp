@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "${parent_directory}_${this_directory}.hpp"
+#include "${parent_directory}_${dir_name}.hpp"
 
 int main() {
     std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " " << AofCode_Cpp::cmake::campaign_day << '\n';
