@@ -3,8 +3,6 @@ include(GenerateExportHeader)
 
 add_library(aoc_library aoc_library.cpp)
 
-
-
 add_library(AofCode_Cpp::aoc_library ALIAS aoc_library)
 
 target_link_libraries(aoc_library PRIVATE AofCode_Cpp_options AofCode_Cpp_warnings)
