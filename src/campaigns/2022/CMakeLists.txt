@@ -17,7 +17,8 @@ foreach(day_no RANGE 1 25)
             message("Creating CMakeLists.txt file for this days solution.")
             configure_file(
                 "${CMAKE_SOURCE_DIR}/configured_files/CMakeLists.txt.in" 
-                "${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt")
+                "${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt"
+                @ONLY)
         endif()
         add_subdirectory(${dir_name})
     endif()
