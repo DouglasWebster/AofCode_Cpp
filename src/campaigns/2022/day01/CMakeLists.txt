@@ -1,18 +1,26 @@
-set(path ${CMAKE_CURRENT_LIST_DIR})
+set(path /mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022)
 cmake_path(GET path FILENAME this_directory)
 
-if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/${parent_directory}_${this_directory}.hpp")
+if(NOT EXISTS "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day01/2022_day01.hpp")
     message("Creating standard header file for this days solution.")
     configure_file(
-        "${CMAKE_SOURCE_DIR}/configured_files/day_details.hpp.in" 
-        "${CMAKE_CURRENT_LIST_DIR}/${parent_directory}_${this_directory}.hpp")
+        "/mnt/DEV/cpp_work/AofCode_Cpp/configured_files/day_details.hpp.in" 
+        "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day01/2022_day01.hpp")
 endif()
 
-if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/main.cpp")
+if(NOT EXISTS "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day01/2022_day01.cpp")
+    message("Creating standard code file for this days solution.")
+    configure_file(
+        "/mnt/DEV/cpp_work/AofCode_Cpp/configured_files/day_details.cpp.in" 
+        "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day01/2022_day01.cpp")
+endif()
+
+if(NOT EXISTS "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day01/main.cpp")
     message("Creating standard main.cpp file for this days solution.")
     configure_file(
-        "${CMAKE_SOURCE_DIR}/configured_files/day_main.cpp.in" 
-        "${CMAKE_CURRENT_LIST_DIR}/main.cpp")
+        "/mnt/DEV/cpp_work/AofCode_Cpp/configured_files/day_main.cpp.in" 
+        "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day01/main.cpp")
 endif()
 
-add_executable("${parent_directory}-${this_directory}" main.cpp)
+
+add_executable(2022-day01 main.cpp)
