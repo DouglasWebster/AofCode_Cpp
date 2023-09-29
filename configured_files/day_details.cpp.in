@@ -1,1 +1,1 @@
-#include "${parent_directory}_${dir_name}.hpp"
+#include "@parent_directory@_@dir_name@.hpp"
