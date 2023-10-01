@@ -27,3 +27,11 @@ endif()
 
 
 add_executable(2022-day01 main.cpp 2022_day01.cpp)
+
+target_link_libraries(
+  2022-day01
+  PRIVATE AofCode_Cpp::AofCode_Cpp_warnings
+          AofCode_Cpp::AofCode_Cpp_options
+          AofCode_Cpp::aoc_library)
+
+target_compile_definitions(2022-day01 PRIVATE CURRENT_LIST_DIR="${CMAKE_CURRENT_LIST_DIR}")
