@@ -8,6 +8,12 @@ namespace AofCode_Cpp::cmake {
     inline constexpr std::string_view campaign_day = "2022";
 } //namespace AofCode::cmake
 
-using ElvenPacks = std::vector<std::vector<int>>;
+using ElvenPack = std::vector<int>;
+using ElvenPacks = std::vector<ElvenPack>;
+using PacksCalories= ElvenPack;
 
-std::vector<int> collate_calories(const ElvenPacks & elven_packs);
+ElvenPacks collate_calories(const ElvenPacks &);
+
+PacksCalories sum_calories(const ElvenPacks &);
+
+int max_values(const ElvenPack &, int);
