@@ -26,4 +26,4 @@ if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/main.cpp")
 endif()
 
 
-add_executable(2022-day01 main.cpp)
+add_executable(2022-day01 main.cpp 2022_day01.cpp)
