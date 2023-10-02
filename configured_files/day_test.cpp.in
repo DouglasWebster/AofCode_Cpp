@@ -1,0 +1,14 @@
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_container_properties.hpp>
+#include <catch2/matchers/catch_matchers_vector.hpp>
+
+#include <iostream>
+
+#include <@parent_directory@_@dir_name@.hpp>
+
+// start with a test case that does nothing but fail.
+
+TEST_CASE(" @parent_directory@ @dir_name@ testing not started", "[@dir_name@]")
+{
+    REQUIRE( false );
+}
