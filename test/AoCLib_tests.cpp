@@ -49,7 +49,18 @@ TEST_CASE(" Vectorise integer data", "[vectorise]")
     test_file << test_data << std::flush;
     const AoCLib::int_data data_vector{ { 1, 2, 3 } };
     REQUIRE_THAT(AoCLib::vectorise_int_data(tmp_file.str()), Catch::Matchers::Equals(data_vector));
-    
+  }
+
+  SECTION("separators can be either space of comma")
+  {
+    std::ofstream test_file{ tmp_file.str() };
+    const std::string space_test_data{ "1 2 3" };
+
+    if (!test_file) { std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n"; }
+
+    test_file << space_test_data << std::flush;
+    const AoCLib::int_data data_vector{ { 1, 2, 3 } };
+    REQUIRE_THAT(AoCLib::vectorise_int_data(tmp_file.str()), Catch::Matchers::Equals(data_vector));
   }
 
   SECTION("empty lines are returned as empty vectors")
@@ -72,12 +83,96 @@ TEST_CASE(" Vectorise integer data", "[vectorise]")
     test_file << test_data << std::flush;
     data_vector.clear();
     data_vector.push_back({});
-    data_vector.push_back( {1,2,3});
+    data_vector.push_back({ 1, 2, 3 });
     data_vector.push_back({});
     REQUIRE_THAT(AoCLib::vectorise_int_data(tmp_file.str()), Catch::Matchers::Equals(data_vector));
   }
 
   // clean up after each test
   std::filesystem::path temp_file_path = tmp_file.str();
-  if(std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path);}
+  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
+}
+
+TEST_CASE(" Vectorise character data", "[vectorise]")
+{
+  using Catch::Matchers::IsEmpty;
+  auto empty_vector = std::vector<std::vector<std::string>>{};
+  std::stringstream tmp_file;
+  tmp_file << std::tmpnam(nullptr) << "_AoCLibTest.txt";// NOLINT: This is not thread safe!
+
+  SECTION("an empty or invalid file name returns and empty vector ")
+  {
+    REQUIRE_THAT(AoCLib::vectorise_string_data(""), IsEmpty());
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str()), Catch::Matchers::IsEmpty());
+  }
+
+  SECTION("a file with no data returns a single empty vector")
+  {
+    const std::ofstream test_file{ tmp_file.str() };
+    if (!test_file) { std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n"; }
+
+    const AoCLib::str_data no_data_vector{ {} };
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str()), Catch::Matchers::Equals(no_data_vector));
+  }
+
+  SECTION("a file with a single line of data returns a single vector")
+  {
+    std::ofstream test_file{ tmp_file.str() };
+    const std::string test_data{ "A, B, C" };
+
+    if (!test_file) { std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n"; }
+
+    test_file << test_data << std::flush;
+    const AoCLib::str_data data_vector{ { "A", "B", "C" } };
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str(), ','), Catch::Matchers::Equals(data_vector));
+  }
+
+  SECTION("separators can be either space of comma")
+  {
+    std::ofstream test_file{ tmp_file.str() };
+    const std::string space_test_data{ "A B C" };
+
+    if (!test_file) { std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n"; }
+
+    test_file << space_test_data << std::flush;
+    const AoCLib::str_data data_vector{ { "A", "B", "C" } };
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str()), Catch::Matchers::Equals(data_vector));
+  }
+
+  SECTION("empty lines are returned as vectors with empty strings")
+  {
+
+    std::ofstream test_file{ tmp_file.str() };
+    std::string test_data{ "" };
+
+    if (!test_file) { std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n"; }
+
+    test_file << test_data << std::flush;
+    AoCLib::str_data data_vector{ {} };
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str()), Catch::Matchers::Equals(data_vector));
+
+    test_data.append(" ");
+    test_file << test_data << std::flush;
+    data_vector.clear();
+    data_vector.push_back({""});
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str()), Catch::Matchers::Equals(data_vector));
+
+    test_data.append("\nA, B, C\n ");
+    test_file << test_data << std::flush;
+    data_vector.push_back({ "A", "B", "C" });
+    data_vector.push_back({""});
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str(), ','), Catch::Matchers::Equals(data_vector));
+
+    test_data.clear();
+    test_data.append("\nDEF,   IJK,   LMN");
+    test_file << test_data << std::flush;
+    data_vector.push_back({"DEF", "IJK", "LMN"});
+
+    REQUIRE_THAT(AoCLib::vectorise_string_data(tmp_file.str(), ','), Catch::Matchers::Equals(data_vector));
+
+  }
+
+  // clean up after each test
+  std::filesystem::path temp_file_path = tmp_file.str();
+  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }
