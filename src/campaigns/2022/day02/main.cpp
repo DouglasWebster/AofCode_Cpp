@@ -12,10 +12,10 @@ int main()
 
   const AoCLib::str_data raw_vector{ AoCLib::vectorise_string_data(data_file) };
 
-  if (raw_vector.empty()) {
-    std::cout << "No data to analyse!  Terminating program.";
-    return 0;
-  }
+  // if (raw_vector.empty()) {
+  //   std::cout << "No data to analyse!  Terminating program.";
+  //   return 0;
+  // }
 
   const strategy moves{ collate_moves(raw_vector) };
 
