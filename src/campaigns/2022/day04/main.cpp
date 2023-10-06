@@ -21,15 +21,19 @@ int main()
 
   Assignments assignments{ collate_assignments(raw_vector) };
 
-  const int fully_contained_ranges =
-    std::accumulate(assignments.begin(), assignments.end(), 0, [](int accumulator, auto assignment) {
+  const int fully_contained_ranges = std::accumulate(
+    assignments.begin(), assignments.end(), 0, [](int accumulator, auto assignment) {
       return (contains_fully(assignment) ? ++accumulator : accumulator);
     });
-
-  std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " " << AofCode_Cpp::cmake::campaign_day
-            << '\n';
+  
+  const int overlaps = std::accumulate(
+    assignments.begin(), assignments.end(), 0, [](int accumulator, auto assignment) {
+      return (overlapping(assignment) ? ++accumulator : accumulator);
+    });
+  std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
+            << AofCode_Cpp::cmake::campaign_day << '\n';
   std::cout << "Part 1 solution: " << fully_contained_ranges << '\n';
-  std::cout << "Part 2 solution:\n";
+  std::cout << "Part 2 solution:" << overlaps << '\n';
 
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - time_start);

@@ -67,3 +67,45 @@ TEST_CASE(" check fully contains", "[day04]") {
     CHECK(contains_fully(assignment) == false);
 
 }
+
+TEST_CASE(" checks overlapping" "[day04]")
+{
+    Assignment assignment{};
+    CHECK(overlapping(assignment) == true);
+
+    assignment.first.first = 2;
+    assignment.first.second = 4;
+    assignment.second.first = 6;
+    assignment.second.second = 8;
+    CHECK(overlapping(assignment) == false);
+
+    assignment.first.first = 2;
+    assignment.first.second = 3;
+    assignment.second.first = 4;
+    assignment.second.second = 5;
+    CHECK(overlapping(assignment) == false);
+
+    assignment.first.first = 5;
+    assignment.first.second = 7;
+    assignment.second.first = 7;
+    assignment.second.second = 9;
+    CHECK(overlapping(assignment) == true);
+
+    assignment.first.first = 2;
+    assignment.first.second = 8;
+    assignment.second.first = 4;
+    assignment.second.second = 7;
+    CHECK(overlapping(assignment) == true);
+
+    assignment.first.first = 6;
+    assignment.first.second = 6;
+    assignment.second.first = 4;
+    assignment.second.second = 6;
+    CHECK(overlapping(assignment) == true);
+
+    assignment.first.first = 2;
+    assignment.first.second = 6;
+    assignment.second.first = 4;
+    assignment.second.second = 8;
+    CHECK(overlapping(assignment) == true);
+}

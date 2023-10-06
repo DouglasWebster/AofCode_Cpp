@@ -51,3 +51,28 @@ bool contains_fully(const Assignment &assignment)
 
   return false;
 }
+
+bool overlapping(const Assignment &assignment)
+{
+  if (assignment.first.first <= assignment.second.first
+      && assignment.first.second >= assignment.second.first) {
+    return true;
+  }
+
+  if (assignment.first.first <= assignment.second.second
+      && assignment.first.second >= assignment.second.second) {
+    return true;
+  }
+
+  if (assignment.second.first <= assignment.first.first
+      && assignment.second.second >= assignment.first.first) {
+    return true;
+  }
+
+  if (assignment.second.first <= assignment.first.second
+      && assignment.second.second >= assignment.first.second) {
+    return true;
+  }
+
+  return false;
+}

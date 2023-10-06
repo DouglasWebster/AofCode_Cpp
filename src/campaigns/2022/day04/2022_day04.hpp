@@ -15,7 +15,4 @@ using Assignments = std::vector <Assignment>;
 
 Assignments collate_assignments(const AoCLib::str_data &);
 bool contains_fully(const Assignment &);
-
-
-
-
+bool overlapping(const Assignment &);
