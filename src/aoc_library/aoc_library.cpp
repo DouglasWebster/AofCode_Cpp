@@ -3,16 +3,18 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 
-std::string removeLeadingSpaces(const std::string& input) {
-    const size_t start = input.find_first_not_of(" \t"); // Find the first non-space character
+std::string removeLeadingSpaces(const std::string &input)
+{
+  const size_t start = input.find_first_not_of(" \t");// Find the first non-space character
 
-    if (start != std::string::npos) {
-        return input.substr(start); // Return the substring starting from the first non-space character
-    }
+  if (start != std::string::npos) {
+    return input.substr(start);// Return the substring starting from the first non-space character
+  }
 
-    return ""; // If the string is all spaces, return an empty string
+  return "";// If the string is all spaces, return an empty string
 }
 
 AoCLib::int_data AoCLib::vectorise_int_data(const std::string &file_name) noexcept
@@ -45,7 +47,8 @@ AoCLib::int_data AoCLib::vectorise_int_data(const std::string &file_name) noexce
   return data;
 }
 
-AoCLib::str_data AoCLib::vectorise_string_data(const std::string &file_name, const char delimiter) noexcept
+AoCLib::str_data AoCLib::vectorise_string_data(const std::string &file_name,
+  const char delimiter) noexcept
 {
   str_data data{};
   if (file_name.empty()) { return data; }
@@ -59,7 +62,7 @@ AoCLib::str_data AoCLib::vectorise_string_data(const std::string &file_name, con
   while (source_file && !source_file.eof()) {
     std::string line_read;
     std::vector<std::string> words{};
-    
+
     std::getline(source_file, line_read);
 
     std::stringstream word_stream(line_read);
@@ -68,6 +71,29 @@ AoCLib::str_data AoCLib::vectorise_string_data(const std::string &file_name, con
     while (std::getline(word_stream, word, delimiter)) {
       words.push_back(removeLeadingSpaces(word));
     }
+
+    data.push_back(words);
+  }
+
+  return data;
+}
+AoCLib::char_data AoCLib::vectorise_char_data(const std::string &file_name) noexcept
+{
+  char_data data{};
+
+  if (file_name.empty()) { return data; }
+
+  std::ifstream source_file{ file_name };
+  if (!source_file) {
+    std::cerr << "AoCLib Error: char data file " << file_name << " could not be opened.\n";
+    return data;
+  }
+
+  while (source_file && !source_file.eof()) {
+    std::string line_read;
+    std::getline(source_file, line_read);
+
+    const std::vector<char>words(line_read.begin(), line_read.end());
 
     data.push_back(words);
   }
