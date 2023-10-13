@@ -101,7 +101,7 @@ int make_move(const Board &board, const Move &move_to, Location current_location
                            : current_location.first.second;// start with row no.
 
   if (facing == Direction::left || facing == Direction::up) {
-    current_position = tile_count - current_position -1;
+    current_position = tile_count - current_position - 1;
   }
 
   // now do the movement.
@@ -135,69 +135,174 @@ int make_move(const Board &board, const Move &move_to, Location current_location
       }
     }
 
-      auto restart_tile = movement_tiles[static_cast<size_t>(restart_position)];
-      if (restart_tile == '.') {
-        current_position = static_cast<int>(restart_position);
-        continue;
-      }
-
-      if (restart_tile == '#') {// still can't go anywhere
-        break;
-      }
+    auto restart_tile = movement_tiles[static_cast<size_t>(restart_position)];
+    if (restart_tile == '.') {
+      current_position = static_cast<int>(restart_position);
+      continue;
     }
 
-    return (facing == Direction::down || facing == Direction::right)
-             ? current_position
-             : tile_count - current_position - 1;
-  }
-
-  void update_location(int offset, const Move &move, Location &location)
-  {
-    const Direction facing{ location.second };
-
-    if (facing == Direction::left || facing == Direction::right) {
-      location.first.first = offset;
-    } else {
-      location.first.second = offset;
-    }
-
-    const Rotation turn = move.second;
-
-    if (turn == Rotation::terminate) { return; }
-
-    if (turn == Rotation::left) {
-      switch (facing) {
-      case Direction::left:
-        location.second = Direction::down;
-        break;
-      case Direction::down:
-        location.second = Direction::right;
-        break;
-      case Direction::right:
-        location.second = Direction::up;
-        break;
-      case Direction::up:
-        location.second = Direction::left;
-        break;
-      default:
-        break;
-      }
-    } else {
-      switch (facing) {
-      case Direction::left:
-        location.second = Direction::up;
-        break;
-      case Direction::up:
-        location.second = Direction::right;
-        break;
-      case Direction::right:
-        location.second = Direction::down;
-        break;
-      case Direction::down:
-        location.second = Direction::left;
-        break;
-      default:
-        break;
-      }
+    if (restart_tile == '#') {// still can't go anywhere
+      break;
     }
   }
+
+  return (facing == Direction::down || facing == Direction::right)
+           ? current_position
+           : tile_count - current_position - 1;
+}
+
+void update_location(int offset, const Move &move, Location &location)
+{
+  const Direction facing{ location.second };
+
+  if (facing == Direction::left || facing == Direction::right) {
+    location.first.first = offset;
+  } else {
+    location.first.second = offset;
+  }
+
+  const Rotation turn = move.second;
+
+  if (turn == Rotation::terminate) { return; }
+
+  if (turn == Rotation::left) {
+    switch (facing) {
+    case Direction::left:
+      location.second = Direction::down;
+      break;
+    case Direction::down:
+      location.second = Direction::right;
+      break;
+    case Direction::right:
+      location.second = Direction::up;
+      break;
+    case Direction::up:
+      location.second = Direction::left;
+      break;
+    default:
+      break;
+    }
+  } else {
+    switch (facing) {
+    case Direction::left:
+      location.second = Direction::up;
+      break;
+    case Direction::up:
+      location.second = Direction::right;
+      break;
+    case Direction::right:
+      location.second = Direction::down;
+      break;
+    case Direction::down:
+      location.second = Direction::left;
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+FaceLInks initialise_face_links()
+{
+
+  // TODO: refactor this code so that the link is a 2 digit number
+  // first digit is 1 - 6 for the face.
+  // second digit is 1-4 for the direction up, right, down, left.
+
+  FaceLinks face_links{};
+  constexpr int no_of_faces{ 6 };
+  constexpr int face_1{ 1 };
+  constexpr int face_2{ 2 };
+  constexpr int face_3{ 3 };
+  constexpr int face_4{ 4 };
+  constexpr int face_5{ 5 };
+  constexpr int face_6{ 6 };
+  constexpr int face_1_up{ 11 };
+  constexpr int face_1_right{ 12 };
+  constexpr int face_1_down{ 13 };
+  constexpr int face_1_left{ 14 };
+  constexpr int face_2_up{ 21 };
+  constexpr int face_2_right{ 22 };
+  constexpr int face_2_down{ 23 };
+  constexpr int face_2_left{ 24 };
+  constexpr int face_3_up{ 31 };
+  constexpr int face_3_right{ 32 };
+  constexpr int face_3_down{ 33 };
+  constexpr int face_3_left{ 34 };
+  constexpr int face_4_up{ 41 };
+  constexpr int face_4_right{ 42 };
+  constexpr int face_4_down{ 43 };
+  constexpr int face_4_left{ 44 };
+  constexpr int face_5_up{ 51 };
+  constexpr int face_5_right{ 52 };
+  constexpr int face_5_down{ 53 };
+  constexpr int face_5_left{ 54 };
+  constexpr int face_6_up{ 61 };
+  constexpr int face_6_right{ 62 };
+  constexpr int face_6_down{ 63 };
+  constexpr int face_6_left{ 64 };
+
+
+  for (auto face{ 1 }; face < no_of_faces; ++face) {
+    switch (face) {
+    case face_1:
+      face_links.insert(face_1_up, face_2_down);
+      face_links.insert(face_1_right, face_6_left);
+      face_links.insert(face_1_down, face_4_down);
+      face_links.insert(face_1_left, face_3_down);
+      break;
+
+    case face_2:
+      face_links.insert(face_2_up, face_1_down);
+      face_links.insert(face_2_right, face_3_right);
+      face_links.insert(face_2_down, face_5_up);
+      face_links.insert(face_2_left, face_6_up);
+      break;
+
+    case face_3:
+      face_links.insert(face_3_up, face_1_right);
+      face_links.insert(face_3_right, face_4_right);
+      face_links.insert(face_3_down, face_5_right);
+      face_links.insert(face_3_left, face_2_left);
+      break;
+
+    case face_4:
+      face_links.insert(face_4_up, face_1_up);
+      face_links.insert(face_4_right, face_6_down);
+      face_links.insert(face_4_down, face_5_down);
+      face_links.insert(face_4_left, face_3_up);
+      break:
+    case face_5:
+      face_links.insert(face_5_uface_4_up, FaceLink(face_4, Direction::up));
+      face_links.insert(face_5_uface_4_right, FaceLink(face_6, Direction::right));
+      face_links.insert(face_5_uface_4_right, FaceLink(face_2, Direction::up));
+      face_links.insert(face_5_uface_4_right FaceLink(face_3, Direction::up));
+      break;
+    case face_6:
+      face_links.insert(face_6_uface_4_up, FaceLink(face_4, Direction::left));
+      face_links.insert(face_6_uface_4_right, FaceLink(face_1, Direction::left));
+      face_links.insert(face_6_uface_4_right FaceLink(face_2, Direction::right));
+      face_links.insert(face_6_uface_4_right FaceLink(face_5, Direction::left));
+      break;
+    default:
+      break;
+    }
+  }
+  return face_links;
+}
+
+MapCube initialise_map_cube(const Board &board)
+{
+  MapCube map_cube{};
+  if (board.empty()) { return map_cube; }
+  return map_cube;
+}
+
+int create_map_cube(const Board &board, MapCube &map_cube, FaceLInks &face_links)
+{
+  if (board.empty()) { return 0; }
+  if (map_cube.empty()) { return 0; }
+  if (face_links.empty()) { return 0; }
+
+  return 1;
+}

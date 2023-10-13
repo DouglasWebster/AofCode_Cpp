@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 
 #include <AofCode_Cpp/aoc_library.hpp>
@@ -88,3 +89,14 @@ int make_move(const Board &board, const Move &move_to, Location current_location
  * @param location Where we started from and which way we were facing.
  */
 void update_location(int offset, const Move &move, Location &location);
+
+using Tile = std::pair<int, int>;
+using Face = std::vector<Tile>;
+using MapCube = std::vector<Face>;
+using FaceLinks = std::map<int, int>;
+
+FaceLInks initialise_face_links();
+
+MapCube initialise_map_cube(const Board & board);
+
+int create_map_cube(const Board &board, MapCube &map_cube, FaceLInks &face_links);
