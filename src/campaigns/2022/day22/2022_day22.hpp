@@ -10,7 +10,47 @@ inline constexpr std::string_view campaign_year = "2022";
 inline constexpr std::string_view campaign_day = "day22";
 }// namespace AofCode_Cpp::cmake
 
+constexpr int no_of_faces{ 6 };
+constexpr int face_1{ 1 };
+constexpr int face_2{ 2 };
+constexpr int face_3{ 3 };
+constexpr int face_4{ 4 };
+constexpr int face_5{ 5 };
+constexpr int face_6{ 6 };
+
 enum class Direction { right = 0, down = 1, left = 2, up = 3 };
+
+constexpr int ten{10};
+
+constexpr int face_1_right{ face_1 * ten + static_cast<int>(Direction::right) };
+constexpr int face_1_down{ face_1 * ten + static_cast<int>(Direction::down) };
+constexpr int face_1_left{ face_1 * ten + static_cast<int>(Direction::left) };
+constexpr int face_1_up{ face_1 * ten + static_cast<int>(Direction::up) };
+
+constexpr int face_2_right{ face_2 * ten + static_cast<int>(Direction::right) };
+constexpr int face_2_down{ face_2 * ten + static_cast<int>(Direction::down) };
+constexpr int face_2_left{ face_2 * ten + static_cast<int>(Direction::left) };
+constexpr int face_2_up{ face_2 * ten + static_cast<int>(Direction::up) };
+
+constexpr int face_3_right{ face_3 * ten + static_cast<int>(Direction::right) };
+constexpr int face_3_down{ face_3 * ten + static_cast<int>(Direction::down) };
+constexpr int face_3_left{ face_3 * ten + static_cast<int>(Direction::left) };
+constexpr int face_3_up{ face_3 * ten + static_cast<int>(Direction::up) };
+
+constexpr int face_4_right{ face_4 * ten + static_cast<int>(Direction::right) };
+constexpr int face_4_down{ face_4 * ten + static_cast<int>(Direction::down) };
+constexpr int face_4_left{ face_4 * ten + static_cast<int>(Direction::left) };
+constexpr int face_4_up{ face_4 * ten + static_cast<int>(Direction::up) };
+
+constexpr int face_5_right{ face_5 * ten + static_cast<int>(Direction::right) };
+constexpr int face_5_down{ face_5 * ten + static_cast<int>(Direction::down) };
+constexpr int face_5_left{ face_5 * ten + static_cast<int>(Direction::left) };
+constexpr int face_5_up{ face_5 * ten + static_cast<int>(Direction::up) };
+
+constexpr int face_6_right{ face_6 * ten + static_cast<int>(Direction::right) };
+constexpr int face_6_down{ face_6 * ten + static_cast<int>(Direction::down) };
+constexpr int face_6_left{ face_6 * ten + static_cast<int>(Direction::left) };
+constexpr int face_6_up{ face_6 * ten + static_cast<int>(Direction::up) };
 
 enum class Rotation { right = 'R', left = 'L', terminate = 'T' };
 
@@ -90,13 +130,31 @@ int make_move(const Board &board, const Move &move_to, Location current_location
  */
 void update_location(int offset, const Move &move, Location &location);
 
-using Tile = std::pair<int, int>;
+using Cell = std::pair<int, int>;
+using Tile = std::pair<int, Cell>;
+using TileDirection = std::pair<Tile, Direction>;
 using Face = std::vector<Tile>;
 using MapCube = std::vector<Face>;
 using FaceLinks = std::map<int, int>;
 
-FaceLInks initialise_face_links();
+/**
+ * @brief create the way we are facing when transitioning from one face to another
+ *
+ * @return FaceLinks A map of face directions.
+ */
+FaceLinks initialise_face_directions();
 
-MapCube initialise_map_cube(const Board & board);
+/**
+ * @brief determine the next cell and direction if changing faces.
+ *
+ * @param current_tile The current cell location and current face.
+ * @param heading Keeps track of the direction **relative** to the cell.
+ * @return Tile The face and cell that would be transitioned to,
+ */
+TileDirection determine_cell_on_face_change(FaceLinks &face_links,
+  const TileDirection &current_tile,
+  const int face_size);
 
-int create_map_cube(const Board &board, MapCube &map_cube, FaceLInks &face_links);
+MapCube initialise_map_cube(const Board &board);
+
+int create_map_cube(const Board &board, MapCube &map_cube, FaceLinks &face_links);

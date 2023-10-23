@@ -202,94 +202,144 @@ void update_location(int offset, const Move &move, Location &location)
   }
 }
 
-FaceLInks initialise_face_links()
+FaceLinks initialise_face_directions()
 {
-
-  // TODO: refactor this code so that the link is a 2 digit number
-  // first digit is 1 - 6 for the face.
-  // second digit is 1-4 for the direction up, right, down, left.
-
   FaceLinks face_links{};
-  constexpr int no_of_faces{ 6 };
-  constexpr int face_1{ 1 };
-  constexpr int face_2{ 2 };
-  constexpr int face_3{ 3 };
-  constexpr int face_4{ 4 };
-  constexpr int face_5{ 5 };
-  constexpr int face_6{ 6 };
-  constexpr int face_1_up{ 11 };
-  constexpr int face_1_right{ 12 };
-  constexpr int face_1_down{ 13 };
-  constexpr int face_1_left{ 14 };
-  constexpr int face_2_up{ 21 };
-  constexpr int face_2_right{ 22 };
-  constexpr int face_2_down{ 23 };
-  constexpr int face_2_left{ 24 };
-  constexpr int face_3_up{ 31 };
-  constexpr int face_3_right{ 32 };
-  constexpr int face_3_down{ 33 };
-  constexpr int face_3_left{ 34 };
-  constexpr int face_4_up{ 41 };
-  constexpr int face_4_right{ 42 };
-  constexpr int face_4_down{ 43 };
-  constexpr int face_4_left{ 44 };
-  constexpr int face_5_up{ 51 };
-  constexpr int face_5_right{ 52 };
-  constexpr int face_5_down{ 53 };
-  constexpr int face_5_left{ 54 };
-  constexpr int face_6_up{ 61 };
-  constexpr int face_6_right{ 62 };
-  constexpr int face_6_down{ 63 };
-  constexpr int face_6_left{ 64 };
 
-
-  for (auto face{ 1 }; face < no_of_faces; ++face) {
+  for (auto face{ 1 }; face <= no_of_faces; ++face) {
     switch (face) {
     case face_1:
-      face_links.insert(face_1_up, face_2_down);
-      face_links.insert(face_1_right, face_6_left);
-      face_links.insert(face_1_down, face_4_down);
-      face_links.insert(face_1_left, face_3_down);
+      face_links.emplace(face_1_up, face_2_down);
+      face_links.emplace(face_1_right, face_6_left);
+      face_links.emplace(face_1_down, face_4_down);
+      face_links.emplace(face_1_left, face_3_down);
       break;
 
     case face_2:
-      face_links.insert(face_2_up, face_1_down);
-      face_links.insert(face_2_right, face_3_right);
-      face_links.insert(face_2_down, face_5_up);
-      face_links.insert(face_2_left, face_6_up);
+      face_links.emplace(face_2_up, face_1_down);
+      face_links.emplace(face_2_right, face_3_right);
+      face_links.emplace(face_2_down, face_5_up);
+      face_links.emplace(face_2_left, face_6_up);
       break;
 
     case face_3:
-      face_links.insert(face_3_up, face_1_right);
-      face_links.insert(face_3_right, face_4_right);
-      face_links.insert(face_3_down, face_5_right);
-      face_links.insert(face_3_left, face_2_left);
+      face_links.emplace(face_3_up, face_1_right);
+      face_links.emplace(face_3_right, face_4_right);
+      face_links.emplace(face_3_down, face_5_right);
+      face_links.emplace(face_3_left, face_2_left);
       break;
 
     case face_4:
-      face_links.insert(face_4_up, face_1_up);
-      face_links.insert(face_4_right, face_6_down);
-      face_links.insert(face_4_down, face_5_down);
-      face_links.insert(face_4_left, face_3_up);
-      break:
+      face_links.emplace(face_4_up, face_1_up);
+      face_links.emplace(face_4_right, face_6_down);
+      face_links.emplace(face_4_down, face_5_down);
+      face_links.emplace(face_4_left, face_3_left);
+      break;
+
     case face_5:
-      face_links.insert(face_5_uface_4_up, FaceLink(face_4, Direction::up));
-      face_links.insert(face_5_uface_4_right, FaceLink(face_6, Direction::right));
-      face_links.insert(face_5_uface_4_right, FaceLink(face_2, Direction::up));
-      face_links.insert(face_5_uface_4_right FaceLink(face_3, Direction::up));
+      face_links.emplace(face_5_up, face_4_up);
+      face_links.emplace(face_5_right, face_6_right);
+      face_links.emplace(face_5_down, face_2_up);
+      face_links.emplace(face_5_left, face_3_up);
       break;
+
     case face_6:
-      face_links.insert(face_6_uface_4_up, FaceLink(face_4, Direction::left));
-      face_links.insert(face_6_uface_4_right, FaceLink(face_1, Direction::left));
-      face_links.insert(face_6_uface_4_right FaceLink(face_2, Direction::right));
-      face_links.insert(face_6_uface_4_right FaceLink(face_5, Direction::left));
+      face_links.emplace(face_6_up, face_4_left);
+      face_links.emplace(face_6_right, face_1_left);
+      face_links.emplace(face_6_down, face_2_right);
+      face_links.emplace(face_6_left, face_5_left);
       break;
+
     default:
       break;
     }
   }
   return face_links;
 }
+
+// NOLINTBEGIN(readability-function-cognitive-complexity)
+TileDirection determine_cell_on_face_change(FaceLinks &face_links,
+  const TileDirection &current_tile,
+  const int face_size)
+{
+
+  const int face = current_tile.first.first;
+  const Direction current_heading{ current_tile.second };
+
+  const int current_face_and_direction = face * ten + static_cast<int>(current_heading);
+
+  auto next_face_and_direction = face_links[current_face_and_direction];
+  auto next_face = next_face_and_direction / ten;
+  const Direction next_heading{ static_cast<Direction>(next_face_and_direction % ten) };
+
+  TileDirection next_tile{ { next_face, { 0, 0 } }, next_heading };
+
+  // no change of direction so just reset the row or the column
+  if (current_heading == next_heading) {
+    if (current_heading == Direction::up || current_heading == Direction::down) {
+      next_tile.first.second.first = (current_heading == Direction::up) ? (face_size - 1) : 0;
+      next_tile.first.second.second = current_tile.first.second.second;
+    } else {
+      next_tile.first.second.first = current_tile.first.second.first;
+      next_tile.first.second.second = (current_heading == Direction::right) ? 0 : (face_size - 1);
+      return next_tile;
+    }
+  }
+  // the change in direction is a reverse
+  if ((current_heading == Direction::up && next_heading == Direction::down)
+      || (current_heading == Direction::down && next_heading == Direction::up)) {
+    next_tile.first.second.first = current_tile.first.second.first;
+    next_tile.first.second.second = face_size - 1 - current_tile.first.second.second;
+    return next_tile;
+  }
+
+  if (current_heading == Direction::right && next_heading == Direction::left) {
+    next_tile.first.second.second = current_tile.first.second.second;
+    next_tile.first.second.first = face_size - 1 - current_tile.first.second.first;
+    return next_tile;
+  }
+
+  // finally the transitions with a twist
+  if (current_heading == Direction::left && next_heading == Direction::down) {
+    next_tile.first.second.first = current_tile.first.second.second;
+    next_tile.first.second.second = current_tile.first.second.first;
+    return next_tile;
+  }
+
+  if (current_heading == Direction::left && next_heading == Direction::up) {
+    next_tile.first.second.first = face_size -1;
+    next_tile.first.second.second = face_size -1 - current_tile.first.second.first;
+    return next_tile;
+  }
+
+  if (current_heading == Direction::right && next_heading == Direction::down) {
+    next_tile.first.second.first = 0;
+    next_tile.first.second.second = face_size - 1 - current_tile.first.second.first;
+    return next_tile;
+  }
+
+  if (current_heading == Direction::up && next_heading == Direction::left) {
+    next_tile.first.second.second = face_size - 1;
+    next_tile.first.second.first = face_size - 1 - current_tile.first.second.second;
+    return next_tile;
+  }
+
+  if (current_heading == Direction::up && next_heading == Direction::right) {
+    next_tile.first.second.second = 0;
+    next_tile.first.second.first = current_tile.first.second.second;
+    return next_tile;
+  }
+
+  if (current_heading == Direction::down && next_heading == Direction::right) {
+    next_tile.first.second.second = 0;
+    next_tile.first.second.first = face_size -1 - current_tile.first.second.second;
+    return next_tile;
+  }
+
+  return next_tile;
+}
+// NOLINTEND(readability-function-cognitive-complexity)
+
 
 MapCube initialise_map_cube(const Board &board)
 {
@@ -298,7 +348,7 @@ MapCube initialise_map_cube(const Board &board)
   return map_cube;
 }
 
-int create_map_cube(const Board &board, MapCube &map_cube, FaceLInks &face_links)
+int create_map_cube(const Board &board, const MapCube &map_cube, const FaceLinks &face_links)
 {
   if (board.empty()) { return 0; }
   if (map_cube.empty()) { return 0; }
