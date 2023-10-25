@@ -3,7 +3,6 @@
 #include <catch2/matchers/catch_matchers_vector.hpp>
 
 #include <filesystem>
-#include <format>
 #include <fstream>
 #include <iostream>
 #include <sstream>
