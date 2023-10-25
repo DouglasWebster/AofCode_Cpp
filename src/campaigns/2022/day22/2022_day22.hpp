@@ -98,11 +98,11 @@ Location get_start_position(const Board &board);
  * @brief create a string consisting of the tiles of either the row or column on which the move
  * occurs
  *
- * @param Board - The board from which to extract the string
- * @param direction the direction in which the movement will occur.
+ * @param board The board from which to extract the string
+ * @param location This contains the direction in which the movement will occur.
  * @return std::string - a string representing the single row or column required.
  *
- * @note If the movement direction is up or right the board is string is reversed so all movement
+ * @note If the movement direction is up or right the board string is reversed so all movement
  * can occur left to right
  */
 std::string extract_movement_tiles(const Board &board, const Location &location);
@@ -133,28 +133,82 @@ void update_location(int offset, const Move &move, Location &location);
 using Cell = std::pair<int, int>;
 using Tile = std::pair<int, Cell>;
 using TileDirection = std::pair<Tile, Direction>;
-using Face = std::vector<Tile>;
-using MapCube = std::vector<Face>;
+using MapCube = std::vector<std::vector<std::vector<char>>>; // face -> row -> column -> # or .
 using FaceLinks = std::map<int, int>;
+using FaceOrigins = std::map<int, Cell>;
 
 /**
  * @brief create the way we are facing when transitioning from one face to another
  *
  * @return FaceLinks A map of face directions.
  */
-FaceLinks initialise_face_directions();
+FaceLinks initialise_face_directions(const int face_size = 50);
 
 /**
  * @brief determine the next cell and direction if changing faces.
  *
+ * @param face_links links to enable a face change if required 
  * @param current_tile The current cell location and current face.
- * @param heading Keeps track of the direction **relative** to the cell.
- * @return Tile The face and cell that would be transitioned to,
+ * @param face_size The number of row/column cells.
+ * @return TileDirection The face, cell and direction that would be transitioned to,
  */
 TileDirection determine_cell_on_face_change(FaceLinks &face_links,
   const TileDirection &current_tile,
   const int face_size);
 
-MapCube initialise_map_cube(const Board &board);
+/**
+ * @brief determine where the mapping of each faces [0, 0] position to the board location
+ * 
+ * @param board the vector of strings representing the unfolded cube
+ * @param face_size the number of rows/columns of the resulting cube
+ * @return FaceOrigins 
+ */
+FaceOrigins determine_face_origins(const Board &board, const size_t face_size = 50);
 
-int create_map_cube(const Board &board, MapCube &map_cube, FaceLinks &face_links);
+/**
+ * @brief create a 3d vector representation of the board folded into a cube 
+ * 
+ * @param board a vector of strings representing the unfolded cube
+ * @param face_size the number of row and column elements of a cube face
+ * @return MapCube 
+ * 
+ * @note The board can be considered as containing a number of square sections each face_size
+ * square.  The board sections are scanned in a left to right, top to bottom pattern.  A section
+ * that contains a ' ' as it's first character is assumed to be a filler section and is
+ * discarded.
+ */
+MapCube initialise_map_cube(const Board &board, const size_t face_size = 50);
+
+/**
+ * @brief Do one move on the 3d cube
+ * 
+ * @param map_cube the cube on which to move
+ * @param tile The current location and the direction of movement
+ * @param face_links links to enable a face change if required 
+ * @return true - the move was successful and the current location has been updated.
+ * @return false - the move was blocked and the current location remains the same.
+ */
+bool make_3d_move(const MapCube &map_cube, TileDirection &tile, FaceLinks &face_links);
+
+/**
+ * @brief complete the moves required.
+ * 
+ * @param moves the moves required
+ * @param map_cube the surface on which the moves occur
+ * @param face_links how to reorient the move on a face transition
+ * @return TileDirection The final location and direction after the moves complete.
+ * 
+ * @note The moves are required to have a terminating marker.  If this is not present then the
+ * function will return an empty TileDirection.
+ */
+TileDirection do_3d_moves(const Moves & moves, const MapCube &map_cube, FaceLinks &face_links );
+
+/**
+ * @brief given a tile convert the face, row, column and direction into a password
+ * 
+ * @param tile the postion tile used to generate the password
+ * @param face_origins the mapping of a faces [0, 0] to the board location.
+ * @return int the password generated.
+ */
+int calculate_3d_password( const TileDirection & tile, FaceOrigins & face_origins) ;
+

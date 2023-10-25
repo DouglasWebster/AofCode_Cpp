@@ -195,92 +195,349 @@ TEST_CASE(" testing part 2", "[day22]")
     ("        ......#."),
   };
 
-  FaceLinks built_links{ initialise_face_directions() };
+  FaceLinks test_links{ initialise_face_directions(4) };
+  FaceLinks problem_links{ initialise_face_directions() };
 
   SECTION(" check face links are set up correctly")
   {
-    CHECK(built_links.size() == 24);
-    CHECK(built_links[face_1_up] == face_2_down);
-    CHECK(built_links[face_2_down] == face_5_up);
-    CHECK(built_links[face_3_right] == face_4_right);
-    CHECK(built_links[face_4_left] == face_3_left);
-    CHECK(built_links[face_5_right] != face_2_down);
-    CHECK(built_links[face_6_up] == face_4_left);
+    CHECK(test_links.size() == 24);
+    CHECK(test_links[face_1_up] == face_2_down);
+    CHECK(test_links[face_2_down] == face_5_up);
+    CHECK(test_links[face_3_right] == face_4_right);
+    CHECK(test_links[face_4_left] == face_3_left);
+    CHECK(test_links[face_5_right] != face_2_down);
+    CHECK(test_links[face_6_up] == face_4_left);
+
+    CHECK(problem_links.size() == 24);
+    CHECK(problem_links[face_1_up] == face_6_right);
+    CHECK(problem_links[face_2_down] == face_3_left);
+    CHECK(problem_links[face_3_right] == face_2_up);
+    CHECK(problem_links[face_4_left] == face_1_right);
+    CHECK(problem_links[face_5_right] != face_3_up);
+    CHECK(problem_links[face_6_up] == face_4_up);
   }
 
-  SECTION(" check correct cell and heading on same direction face transitions")
+  SECTION("check transitions for the test cube")
   {
-    TileDirection current_tile{ { 1, { 3, 1 } }, Direction::down };
-    TileDirection destination_tile{ { 4, { 0, 1 } }, Direction::down };
-    TileDirection next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    SECTION(" check correct cell and heading on same direction face transitions")
+    {
 
-    current_tile = TileDirection{ { 4, { 0, 2 } }, Direction::up };
-    destination_tile = TileDirection{ { 1, { 3, 2 } }, Direction::up };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+      TileDirection current_tile{ { 1, { 3, 1 } }, Direction::down };
+      TileDirection test_destination_tile{ { 4, { 0, 1 } }, Direction::down };
+      TileDirection next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
 
-    current_tile = TileDirection{ { 3, { 3, 3 } }, Direction::right };
-    destination_tile = TileDirection{ { 4, { 3, 0 } }, Direction::right };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+      current_tile = TileDirection{ { 4, { 0, 2 } }, Direction::up };
+      test_destination_tile = TileDirection{ { 1, { 3, 2 } }, Direction::up };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
 
-    current_tile = TileDirection{ { 6, { 3, 0 } }, Direction::left };
-    destination_tile = TileDirection{ { 5, { 3, 3 } }, Direction::left };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+      current_tile = TileDirection{ { 3, { 3, 3 } }, Direction::right };
+      test_destination_tile = TileDirection{ { 4, { 3, 0 } }, Direction::right };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 6, { 3, 0 } }, Direction::left };
+      test_destination_tile = TileDirection{ { 5, { 3, 3 } }, Direction::left };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+    }
+
+    SECTION(" check correct cell and heading on reverse direction face transitions")
+    {
+      // note, there are no left to right transitions.
+
+      TileDirection current_tile{ { 2, { 3, 1 } }, Direction::down };
+      TileDirection test_destination_tile{ { 5, { 3, 2 } }, Direction::up };
+      TileDirection next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+
+      current_tile = TileDirection{ { 1, { 0, 2 } }, Direction::up };
+      test_destination_tile = TileDirection{ { 2, { 0, 1 } }, Direction::down };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 6, { 3, 3 } }, Direction::right };
+      test_destination_tile = TileDirection{ { 1, { 0, 3 } }, Direction::left };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+    }
+
+    SECTION(" check correct cell and heading on twisting face transitions")
+    {
+      TileDirection current_tile{ { 1, { 1, 0 } }, Direction::left };
+      TileDirection test_destination_tile{ { 3, { 0, 1 } }, Direction::down };
+      TileDirection next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 2, { 2, 0 } }, Direction::left };
+      test_destination_tile = TileDirection{ { 6, { 3, 1 } }, Direction::up };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 4, { 3, 3 } }, Direction::right };
+      test_destination_tile = TileDirection{ { 6, { 0, 0 } }, Direction::down };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 6, { 0, 1 } }, Direction::up };
+      test_destination_tile = TileDirection{ { 4, { 2, 3 } }, Direction::left };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 3, { 0, 1 } }, Direction::up };
+      test_destination_tile = TileDirection{ { 1, { 1, 0 } }, Direction::right };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+
+      current_tile = TileDirection{ { 3, { 3, 1 } }, Direction::down };
+      test_destination_tile = TileDirection{ { 5, { 2, 0 } }, Direction::right };
+      next_tile = determine_cell_on_face_change(test_links, current_tile, 4);
+      CHECK(next_tile == test_destination_tile);
+    }
   }
 
-  SECTION(" check correct cell and heading on reverse direction face transitions")
+  SECTION("check transitions for the problem cube")
   {
-    // note, there are no left to right transitions.
+    TileDirection current_tile{};
+    TileDirection destination_tile{};
 
-    TileDirection current_tile{ { 2, { 3, 1 } }, Direction::down };
-    TileDirection destination_tile{ { 5, { 3, 2 } }, Direction::up };
-    TileDirection next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    SECTION("Face 1")
+    {
+      current_tile = TileDirection{ { 1, { 1, 49 } }, Direction::right };
+      destination_tile = TileDirection{ { 2, { 1, 0 } }, Direction::right };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
 
-    current_tile = TileDirection{ { 1, { 0, 2 } }, Direction::up };
-    destination_tile = TileDirection{ { 2, { 0, 1 } }, Direction::down };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+      current_tile = TileDirection{ { 1, { 49, 24 } }, Direction::down };
+      destination_tile = TileDirection{ { 3, { 0, 24 } }, Direction::down };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
 
-    current_tile = TileDirection{ { 6, { 3, 3 } }, Direction::right };
-    destination_tile = TileDirection{ { 1, { 0, 3 } }, Direction::left };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+      current_tile = TileDirection{ { 1, { 25, 0 } }, Direction::left };
+      destination_tile = TileDirection{ { 4, { 24, 0 } }, Direction::right };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 1, { 0, 25 } }, Direction::up };
+      destination_tile = TileDirection{ { 6, { 25, 0 } }, Direction::right };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+    }
+
+    SECTION("Face 2")
+    {
+      current_tile = TileDirection{ { 2, { 0, 49 } }, Direction::right };
+      destination_tile = TileDirection{ { 5, { 49, 49 } }, Direction::left };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 2, { 49, 15 } }, Direction::down };
+      destination_tile = TileDirection{ { 3, { 15, 49 } }, Direction::left };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 2, { 25, 0 } }, Direction::left };
+      destination_tile = TileDirection{ { 1, { 25, 49 } }, Direction::left };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 2, { 0, 25 } }, Direction::up };
+      destination_tile = TileDirection{ { 6, { 49, 25 } }, Direction::up };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+    }
+
+    SECTION("Face 3")
+    {
+      current_tile = TileDirection{ { 3, { 25, 49 } }, Direction::right };
+      destination_tile = TileDirection{ { 2, { 49, 25 } }, Direction::up };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 3, { 49, 30 } }, Direction::down };
+      destination_tile = TileDirection{ { 5, { 0, 30 } }, Direction::down };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 3, { 25, 0 } }, Direction::left };
+      destination_tile = TileDirection{ { 4, { 0, 25 } }, Direction::down };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 3, { 0, 25 } }, Direction::up };
+      destination_tile = TileDirection{ { 1, { 49, 25 } }, Direction::up };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+    }
+    SECTION("Face 4")
+    {
+      current_tile = TileDirection{ { 4, { 18, 49 } }, Direction::right };
+      destination_tile = TileDirection{ { 5, { 18, 0 } }, Direction::right };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 4, { 49, 30 } }, Direction::down };
+      destination_tile = TileDirection{ { 6, { 0, 30 } }, Direction::down };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 4, { 25, 0 } }, Direction::left };
+      destination_tile = TileDirection{ { 1, { 24, 0 } }, Direction::right };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 4, { 0, 25 } }, Direction::up };
+      destination_tile = TileDirection{ { 3, { 25, 0 } }, Direction::right };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+    }
+
+    SECTION("Face 5")
+    {
+      current_tile = TileDirection{ { 5, { 25, 49 } }, Direction::right };
+      destination_tile = TileDirection{ { 2, { 24, 49 } }, Direction::left };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 5, { 49, 30 } }, Direction::down };
+      destination_tile = TileDirection{ { 6, { 30, 49 } }, Direction::left };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 5, { 25, 0 } }, Direction::left };
+      destination_tile = TileDirection{ { 4, { 25, 49 } }, Direction::left };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 5, { 0, 25 } }, Direction::up };
+      destination_tile = TileDirection{ { 3, { 49, 25 } }, Direction::up };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+    }
+
+    SECTION("Face 6")
+    {
+
+      current_tile = TileDirection{ { 6, { 25, 49 } }, Direction::right };
+      destination_tile = TileDirection{ { 5, { 49, 25 } }, Direction::up };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 6, { 49, 30 } }, Direction::down };
+      destination_tile = TileDirection{ { 2, { 0, 30 } }, Direction::down };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 6, { 25, 0 } }, Direction::left };
+      destination_tile = TileDirection{ { 1, { 0, 25 } }, Direction::down };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+
+      current_tile = TileDirection{ { 6, { 0, 25 } }, Direction::up };
+      destination_tile = TileDirection{ { 4, { 49, 25 } }, Direction::up };
+      CHECK(determine_cell_on_face_change(problem_links, current_tile, 50) == destination_tile);
+    }
   }
 
-  SECTION(" check correct cell and heading on twisting face transitions")
+  SECTION(" check the face origins map correctly")
   {
-    TileDirection current_tile{ { 1, { 1, 0 } }, Direction::left };
-    TileDirection destination_tile{ { 3, { 0, 1 } }, Direction::down };
-    TileDirection next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    FaceOrigins result{ determine_face_origins(test_board, 4) };
 
-    current_tile = TileDirection{ { 2, { 2, 0 } }, Direction::left };
-    destination_tile = TileDirection{ { 6, { 3, 1 } }, Direction::up };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    CHECK(result.size() == 6);
 
-    current_tile = TileDirection{ { 4, { 3, 3 } }, Direction::right };
-    destination_tile = TileDirection{ { 6, { 0, 0 } }, Direction::down };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    CHECK(result[1] == std::make_pair(0, 8));
+    CHECK(result[2] == std::make_pair(4, 0));
+    CHECK(result[3] == std::make_pair(4, 4));
+    CHECK(result[4] == std::make_pair(4, 8));
+    CHECK(result[5] == std::make_pair(8, 8));
+    CHECK(result[6] == std::make_pair(8, 12));
 
-    current_tile = TileDirection{ { 6, { 0, 1 } }, Direction::up };
-    destination_tile = TileDirection{ { 4, { 2, 3 } }, Direction::left };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    // now do it with the puzzle data
 
-    current_tile = TileDirection{ { 3, { 0, 1 } }, Direction::up };
-    destination_tile = TileDirection{ { 1, { 1, 0 } }, Direction::right };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    std::string puzzle_data_str{
+      "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day22/input.txt"
+    };
 
-    current_tile = TileDirection{ { 3, { 3, 1 } }, Direction::down };
-    destination_tile = TileDirection{ { 5, { 2, 0 } }, Direction::right };
-    next_tile = determine_cell_on_face_change(built_links, current_tile, 4);
-    CHECK(next_tile == destination_tile);
+    AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(puzzle_data_str) };
+    puzzle_test_data.pop_back();
+    puzzle_test_data.pop_back();
+
+    Board puzzle_board{ make_game_board(puzzle_test_data) };
+
+    FaceOrigins puzzle_results{ determine_face_origins(puzzle_board) };
+
+    CHECK(puzzle_results.size() == 6);
+
+    CHECK(puzzle_results[1] == std::make_pair(0, 50));
+    CHECK(puzzle_results[2] == std::make_pair(0, 100));
+    CHECK(puzzle_results[3] == std::make_pair(50, 50));
+    CHECK(puzzle_results[4] == std::make_pair(100, 0));
+    CHECK(puzzle_results[5] == std::make_pair(100, 50));
+    CHECK(puzzle_results[6] == std::make_pair(150, 0));
+  }
+
+  SECTION(" check the MapCube has the correct size")
+  {
+    MapCube result{ initialise_map_cube(test_board, 4) };
+
+    CHECK(result.size() == 6);
+    CHECK(result[0].size() == 4);
+    CHECK(result[0][0].size() == 4);
+
+    // now do it with the puzzle data
+
+    std::string puzzle_data_str{
+      "/mnt/DEV/cpp_work/AofCode_Cpp/src/campaigns/2022/day22/input.txt"
+    };
+
+    AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(puzzle_data_str) };
+    puzzle_test_data.pop_back();
+    puzzle_test_data.pop_back();
+
+    Board puzzle_board{ make_game_board(puzzle_test_data) };
+
+    MapCube puzzle_cube{ initialise_map_cube(puzzle_board, 50) };
+
+    CHECK(puzzle_cube.size() == 6);
+    CHECK(puzzle_cube[0].size() == 50);
+    CHECK(puzzle_cube[0][0].size() == 50);
+
+    CHECK(puzzle_cube[0][0][0] == '.');
+    CHECK(puzzle_cube[0][25][0] == '#');
+    CHECK(puzzle_cube[1][0][47] == '#');
+    CHECK(puzzle_cube[1][49][0] == '.');
+    CHECK(puzzle_cube[2][3][0] == '#');
+    CHECK(puzzle_cube[2][49][2] == '#');
+    CHECK(puzzle_cube[5][0][6] == '.');
+    CHECK(puzzle_cube[5][49][49] == '.');
+  }
+
+  SECTION(" check that moves occur correctly")
+  {
+    MapCube map_cube{ initialise_map_cube(test_board, 4) };
+    TileDirection current_tile{ { 4, { 1, 3 } }, Direction::right };
+    TileDirection next_tile{ { 6, { 0, 2 } }, Direction::down };
+
+    CHECK(make_3d_move(map_cube, current_tile, test_links) == true);
+    CHECK(current_tile == next_tile);
+
+    current_tile = TileDirection{ { 5, { 3, 2 } }, Direction::down };
+    next_tile = TileDirection{ { 2, { 3, 1 } }, Direction::up };
+
+    CHECK(make_3d_move(map_cube, current_tile, test_links) == true);
+    CHECK(current_tile == next_tile);
+
+    current_tile = TileDirection{ { 3, { 0, 2 } }, Direction::up };
+    next_tile = current_tile;
+
+    CHECK(make_3d_move(map_cube, current_tile, test_links) == false);
+    CHECK(current_tile == next_tile);
+  }
+
+  SECTION("check move sequence ")
+  {
+    Moves moves{ { 10, Rotation::right },
+      { 5, Rotation::left },
+      { 5, Rotation::right },
+      { 10, Rotation::left },
+      { 4, Rotation::right },
+      { 5, Rotation::left },
+      { 5, Rotation::terminate } };
+
+    MapCube map_cube{ initialise_map_cube(test_board, 4) };
+
+    TileDirection final_position{ do_3d_moves(moves, map_cube, test_links) };
+
+    CHECK(final_position.first.first == 3);
+    CHECK(final_position.first.second.first == 0);
+    CHECK(final_position.first.second.second == 2);
+    CHECK(final_position.second == Direction::up);
+  }
+
+  SECTION(" check password generation")
+  {
+    FaceOrigins face_origins{ determine_face_origins(test_board, 4) };
+    TileDirection final_tile{ { 3, { 0, 2 } }, Direction::up };
+
+    CHECK(calculate_3d_password(final_tile, face_origins) == 5031);
   }
 }
