@@ -45,4 +45,7 @@ using char_data = std::vector<std::vector<char>>;
  * @note The function returns and empty vector if it is unable to open the file.
  */
 [[nodiscard]] char_data vectorise_char_data(const std::string &file_name) noexcept;
+
+std::vector<std::string> split_string_into_chunks(const std::string &str, size_t chunk_size);
+
 }// namespace AoCLib

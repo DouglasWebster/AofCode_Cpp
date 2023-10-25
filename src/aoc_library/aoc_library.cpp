@@ -100,3 +100,12 @@ AoCLib::char_data AoCLib::vectorise_char_data(const std::string &file_name) noex
 
   return data;
 }
+
+std::vector<std::string> AoCLib::split_string_into_chunks(const std::string &str, size_t chunk_size) {
+    std::vector<std::string> result;
+    for(size_t chunk_start{0}; chunk_start < str.length(); chunk_start += chunk_size) {
+        result.push_back(str.substr(chunk_start, chunk_size));
+    }
+
+    return result;
+}
