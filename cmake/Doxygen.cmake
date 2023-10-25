@@ -20,7 +20,9 @@ function(AofCode_Cpp_enable_doxygen DOXYGEN_THEME)
 
   # If not specified, exclude the vcpkg files and the files CMake downloads under _deps (like project_options)
   if(NOT DOXYGEN_EXCLUDE_PATTERNS)
-    set(DOXYGEN_EXCLUDE_PATTERNS "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/*" "${CMAKE_CURRENT_BINARY_DIR}/_deps/*")
+    set(DOXYGEN_EXCLUDE_PATTERNS "${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/*" 
+      "${CMAKE_CURRENT_BINARY_DIR}/_deps/*" 
+      "${CMAKE_CURRENT_SOURCE_DIR}/out/*")
       endif()
 
   if("${DOXYGEN_THEME}" STREQUAL "")
