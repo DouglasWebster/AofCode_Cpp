@@ -38,7 +38,7 @@ int main()
                  + static_cast<int>(location.second);
 
   // Part 2 solution
-  FaceLinks face_links{initialise_face_directions()};
+  const FaceLinks face_links{initialise_face_directions()};
   FaceOrigins face_origins{determine_face_origins(board)};
   const MapCube map_cube {initialise_map_cube(board)};
   const TileDirection final_tile{do_3d_moves(moves, map_cube, face_links)};

@@ -20,38 +20,6 @@ constexpr int face_6{ 6 };
 
 enum class Direction { right = 0, down = 1, left = 2, up = 3 };
 
-constexpr int ten{10};
-
-constexpr int face_1_right{ face_1 * ten + static_cast<int>(Direction::right) };
-constexpr int face_1_down{ face_1 * ten + static_cast<int>(Direction::down) };
-constexpr int face_1_left{ face_1 * ten + static_cast<int>(Direction::left) };
-constexpr int face_1_up{ face_1 * ten + static_cast<int>(Direction::up) };
-
-constexpr int face_2_right{ face_2 * ten + static_cast<int>(Direction::right) };
-constexpr int face_2_down{ face_2 * ten + static_cast<int>(Direction::down) };
-constexpr int face_2_left{ face_2 * ten + static_cast<int>(Direction::left) };
-constexpr int face_2_up{ face_2 * ten + static_cast<int>(Direction::up) };
-
-constexpr int face_3_right{ face_3 * ten + static_cast<int>(Direction::right) };
-constexpr int face_3_down{ face_3 * ten + static_cast<int>(Direction::down) };
-constexpr int face_3_left{ face_3 * ten + static_cast<int>(Direction::left) };
-constexpr int face_3_up{ face_3 * ten + static_cast<int>(Direction::up) };
-
-constexpr int face_4_right{ face_4 * ten + static_cast<int>(Direction::right) };
-constexpr int face_4_down{ face_4 * ten + static_cast<int>(Direction::down) };
-constexpr int face_4_left{ face_4 * ten + static_cast<int>(Direction::left) };
-constexpr int face_4_up{ face_4 * ten + static_cast<int>(Direction::up) };
-
-constexpr int face_5_right{ face_5 * ten + static_cast<int>(Direction::right) };
-constexpr int face_5_down{ face_5 * ten + static_cast<int>(Direction::down) };
-constexpr int face_5_left{ face_5 * ten + static_cast<int>(Direction::left) };
-constexpr int face_5_up{ face_5 * ten + static_cast<int>(Direction::up) };
-
-constexpr int face_6_right{ face_6 * ten + static_cast<int>(Direction::right) };
-constexpr int face_6_down{ face_6 * ten + static_cast<int>(Direction::down) };
-constexpr int face_6_left{ face_6 * ten + static_cast<int>(Direction::left) };
-constexpr int face_6_up{ face_6 * ten + static_cast<int>(Direction::up) };
-
 enum class Rotation { right = 'R', left = 'L', terminate = 'T' };
 
 using Board = std::vector<std::string>;
@@ -134,15 +102,16 @@ using Cell = std::pair<int, int>;
 using Tile = std::pair<int, Cell>;
 using TileDirection = std::pair<Tile, Direction>;
 using MapCube = std::vector<std::vector<std::vector<char>>>; // face -> row -> column -> # or .
-using FaceLinks = std::map<int, int>;
 using FaceOrigins = std::map<int, Cell>;
+using FaceLinks = std::vector<std::vector<std::pair<int, Direction>>>; // Face, Edge -> face, direction 
 
 /**
- * @brief create the way we are facing when transitioning from one face to another
- *
- * @return FaceLinks A map of face directions.
+ * @brief create a vector containing links to the next face of a face transiton.
+ * 
+ * @param face_size - the size of the face; enables choosing the correct linkage.
+ * @return FaceLinks 
  */
-FaceLinks initialise_face_directions(const int face_size = 50);
+FaceLinks initialise_face_directions( const int face_size = 50);
 
 /**
  * @brief determine the next cell and direction if changing faces.
@@ -152,7 +121,7 @@ FaceLinks initialise_face_directions(const int face_size = 50);
  * @param face_size The number of row/column cells.
  * @return TileDirection The face, cell and direction that would be transitioned to,
  */
-TileDirection determine_cell_on_face_change(FaceLinks &face_links,
+TileDirection determine_cell_on_face_change(const FaceLinks &face_links,
   const TileDirection &current_tile,
   const int face_size);
 
@@ -188,7 +157,7 @@ MapCube initialise_map_cube(const Board &board, const size_t face_size = 50);
  * @return true - the move was successful and the current location has been updated.
  * @return false - the move was blocked and the current location remains the same.
  */
-bool make_3d_move(const MapCube &map_cube, TileDirection &tile, FaceLinks &face_links);
+bool make_3d_move(const MapCube &map_cube, TileDirection &tile, const FaceLinks &face_links);
 
 /**
  * @brief complete the moves required.
@@ -201,7 +170,7 @@ bool make_3d_move(const MapCube &map_cube, TileDirection &tile, FaceLinks &face_
  * @note The moves are required to have a terminating marker.  If this is not present then the
  * function will return an empty TileDirection.
  */
-TileDirection do_3d_moves(const Moves & moves, const MapCube &map_cube, FaceLinks &face_links );
+TileDirection do_3d_moves(const Moves & moves, const MapCube &map_cube, const FaceLinks &face_links );
 
 /**
  * @brief given a tile convert the face, row, column and direction into a password

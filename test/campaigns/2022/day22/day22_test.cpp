@@ -194,26 +194,32 @@ TEST_CASE(" testing part 2", "[day22]")
     ("        ......#."),
   };
 
-  FaceLinks test_links{ initialise_face_directions(4) };
-  FaceLinks problem_links{ initialise_face_directions() };
+
+  constexpr auto up = static_cast<size_t>(Direction::up); // NOLINT
+  constexpr auto right = static_cast<size_t>(Direction::right);
+  constexpr auto down = static_cast<size_t>(Direction::down);
+  constexpr auto left = static_cast<size_t>(Direction::left);
+
+  FaceLinks test_links{initialise_face_directions(4)};
+  FaceLinks problem_links{initialise_face_directions()};
 
   SECTION(" check face links are set up correctly")
   {
-    CHECK(test_links.size() == 24);
-    CHECK(test_links[face_1_up] == face_2_down);
-    CHECK(test_links[face_2_down] == face_5_up);
-    CHECK(test_links[face_3_right] == face_4_right);
-    CHECK(test_links[face_4_left] == face_3_left);
-    CHECK(test_links[face_5_right] != face_2_down);
-    CHECK(test_links[face_6_up] == face_4_left);
+    CHECK(test_links.size() == 7);  // don't forget to count the dummy zero'th face!
+    CHECK(test_links[1][up] == std::make_pair(face_2, Direction::down));
+    CHECK(test_links[2][down] == std::make_pair(face_5, Direction::up));
+    CHECK(test_links[3][right] == std::make_pair(face_4, Direction::right));
+    CHECK(test_links[4][left] == std::make_pair(face_3, Direction::left));
+    CHECK(test_links[5][right] != std::make_pair(face_2, Direction::down));
+    CHECK(test_links[6][up] == std::make_pair(face_4, Direction::left));
 
-    CHECK(problem_links.size() == 24);
-    CHECK(problem_links[face_1_up] == face_6_right);
-    CHECK(problem_links[face_2_down] == face_3_left);
-    CHECK(problem_links[face_3_right] == face_2_up);
-    CHECK(problem_links[face_4_left] == face_1_right);
-    CHECK(problem_links[face_5_right] != face_3_up);
-    CHECK(problem_links[face_6_up] == face_4_up);
+    CHECK(problem_links.size() == 7);  // don't forget to count the dummy zero'th face!
+    CHECK(problem_links[1][up] == std::make_pair(face_6, Direction::right));
+    CHECK(problem_links[2][down] == std::make_pair(face_3, Direction::left));
+    CHECK(problem_links[3][right] == std::make_pair(face_2, Direction::up));
+    CHECK(problem_links[4][left] == std::make_pair(face_1, Direction::right));
+    CHECK(problem_links[5][right] != std::make_pair(face_3, Direction::up));
+    CHECK(problem_links[6][up] == std::make_pair(face_4, Direction::up));
   }
 
   SECTION("check transitions for the test cube")

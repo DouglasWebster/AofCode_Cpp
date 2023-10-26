@@ -204,55 +204,62 @@ void update_location(int offset, const Move &move, Location &location)
 
 FaceLinks initialise_face_directions(const int face_size)
 {
-  FaceLinks face_links{};
+  constexpr int faces{ 7 };// the zero face is a dummy to allow faces to be referenced 1 - 6;
+  constexpr int edges{ 4 };
+
+  FaceLinks face_links(faces,
+    std::vector<std::pair<int, Direction>>(edges, std::pair<int, Direction>(0, Direction::right)));
 
   constexpr int problem_face_size{ 50 };
+  constexpr auto up = static_cast<size_t>(Direction::up);// NOLINT
+  constexpr auto right = static_cast<size_t>(Direction::right);
+  constexpr auto down = static_cast<size_t>(Direction::down);
+  constexpr auto left = static_cast<size_t>(Direction::left);
+
 
   if (face_size != problem_face_size) {
-
-
-    for (auto face{ 1 }; face <= no_of_faces; ++face) {
+    for (size_t face{ 1 }; face <= no_of_faces; ++face) {
       switch (face) {
       case face_1:
-        face_links.emplace(face_1_up, face_2_down);
-        face_links.emplace(face_1_right, face_6_left);
-        face_links.emplace(face_1_down, face_4_down);
-        face_links.emplace(face_1_left, face_3_down);
+        face_links[face][up] = std::make_pair(face_2, Direction::down);
+        face_links[face][right] = std::make_pair(face_6, Direction::left);
+        face_links[face][down] = std::make_pair(face_4, Direction::down);
+        face_links[face][left] = std::make_pair(face_3, Direction::down);
         break;
 
       case face_2:
-        face_links.emplace(face_2_up, face_1_down);
-        face_links.emplace(face_2_right, face_3_right);
-        face_links.emplace(face_2_down, face_5_up);
-        face_links.emplace(face_2_left, face_6_up);
+        face_links[face][up] = std::make_pair(face_1, Direction::down);
+        face_links[face][right] = std::make_pair(face_3, Direction::right);
+        face_links[face][down] = std::make_pair(face_5, Direction::up);
+        face_links[face][left] = std::make_pair(face_6, Direction::up);
         break;
 
       case face_3:
-        face_links.emplace(face_3_up, face_1_right);
-        face_links.emplace(face_3_right, face_4_right);
-        face_links.emplace(face_3_down, face_5_right);
-        face_links.emplace(face_3_left, face_2_left);
+        face_links[face][up] = std::make_pair(face_1, Direction::right);
+        face_links[face][right] = std::make_pair(face_4, Direction::right);
+        face_links[face][down] = std::make_pair(face_5, Direction::right);
+        face_links[face][left] = std::make_pair(face_2, Direction::left);
         break;
 
       case face_4:
-        face_links.emplace(face_4_up, face_1_up);
-        face_links.emplace(face_4_right, face_6_down);
-        face_links.emplace(face_4_down, face_5_down);
-        face_links.emplace(face_4_left, face_3_left);
+        face_links[face][up] = std::make_pair(face_1, Direction::up);
+        face_links[face][right] = std::make_pair(face_6, Direction::down);
+        face_links[face][down] = std::make_pair(face_5, Direction::down);
+        face_links[face][left] = std::make_pair(face_3, Direction::left);
         break;
 
       case face_5:
-        face_links.emplace(face_5_up, face_4_up);
-        face_links.emplace(face_5_right, face_6_right);
-        face_links.emplace(face_5_down, face_2_up);
-        face_links.emplace(face_5_left, face_3_up);
+        face_links[face][up] = std::make_pair(face_4, Direction::up);
+        face_links[face][right] = std::make_pair(face_6, Direction::right);
+        face_links[face][down] = std::make_pair(face_2, Direction::up);
+        face_links[face][left] = std::make_pair(face_3, Direction::up);
         break;
 
       case face_6:
-        face_links.emplace(face_6_up, face_4_left);
-        face_links.emplace(face_6_right, face_1_left);
-        face_links.emplace(face_6_down, face_2_right);
-        face_links.emplace(face_6_left, face_5_left);
+        face_links[face][up] = std::make_pair(face_4, Direction::left);
+        face_links[face][right] = std::make_pair(face_1, Direction::left);
+        face_links[face][down] = std::make_pair(face_2, Direction::right);
+        face_links[face][left] = std::make_pair(face_5, Direction::left);
         break;
 
       default:
@@ -260,48 +267,48 @@ FaceLinks initialise_face_directions(const int face_size)
       }
     }
   } else {
-    for (auto face{ 1 }; face <= no_of_faces; ++face) {
+    for (size_t face{ 1 }; face <= no_of_faces; ++face) {
       switch (face) {
       case face_1:
-        face_links.emplace(face_1_up, face_6_right);
-        face_links.emplace(face_1_right, face_2_right);
-        face_links.emplace(face_1_down, face_3_down);
-        face_links.emplace(face_1_left, face_4_right);
+        face_links[face][up] = std::make_pair(face_6, Direction::right);
+        face_links[face][right] = std::make_pair(face_2, Direction::right);
+        face_links[face][down] = std::make_pair(face_3, Direction::down);
+        face_links[face][left] = std::make_pair(face_4, Direction::right);
         break;
 
       case face_2:
-        face_links.emplace(face_2_up, face_6_up);
-        face_links.emplace(face_2_right, face_5_left);
-        face_links.emplace(face_2_down, face_3_left);
-        face_links.emplace(face_2_left, face_1_left);
+        face_links[face][up] = std::make_pair(face_6, Direction::up);
+        face_links[face][right] = std::make_pair(face_5, Direction::left);
+        face_links[face][down] = std::make_pair(face_3, Direction::left);
+        face_links[face][left] = std::make_pair(face_1, Direction::left);
         break;
 
       case face_3:
-        face_links.emplace(face_3_up, face_1_up);
-        face_links.emplace(face_3_right, face_2_up);
-        face_links.emplace(face_3_down, face_5_down);
-        face_links.emplace(face_3_left, face_4_down);
+        face_links[face][up] = std::make_pair(face_1, Direction::up);
+        face_links[face][right] = std::make_pair(face_2, Direction::up);
+        face_links[face][down] = std::make_pair(face_5, Direction::down);
+        face_links[face][left] = std::make_pair(face_4, Direction::down);
         break;
 
       case face_4:
-        face_links.emplace(face_4_up, face_3_right);
-        face_links.emplace(face_4_right, face_5_right);
-        face_links.emplace(face_4_down, face_6_down);
-        face_links.emplace(face_4_left, face_1_right);
+        face_links[face][up] = std::make_pair(face_3, Direction::right);
+        face_links[face][right] = std::make_pair(face_5, Direction::right);
+        face_links[face][down] = std::make_pair(face_6, Direction::down);
+        face_links[face][left] = std::make_pair(face_1, Direction::right);
         break;
 
       case face_5:
-        face_links.emplace(face_5_up, face_3_up);
-        face_links.emplace(face_5_right, face_2_left);
-        face_links.emplace(face_5_down, face_6_left);
-        face_links.emplace(face_5_left, face_4_left);
+        face_links[face][up] = std::make_pair(face_3, Direction::up);
+        face_links[face][right] = std::make_pair(face_2, Direction::left);
+        face_links[face][down] = std::make_pair(face_6, Direction::left);
+        face_links[face][left] = std::make_pair(face_4, Direction::left);
         break;
 
       case face_6:
-        face_links.emplace(face_6_up, face_4_up);
-        face_links.emplace(face_6_right, face_5_up);
-        face_links.emplace(face_6_down, face_2_down);
-        face_links.emplace(face_6_left, face_1_down);
+        face_links[face][up] = std::make_pair(face_4, Direction::up);
+        face_links[face][right] = std::make_pair(face_5, Direction::up);
+        face_links[face][down] = std::make_pair(face_2, Direction::down);
+        face_links[face][left] = std::make_pair(face_1, Direction::down);
         break;
 
       default:
@@ -309,11 +316,12 @@ FaceLinks initialise_face_directions(const int face_size)
       }
     }
   }
+
   return face_links;
 }
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
-TileDirection determine_cell_on_face_change(FaceLinks &face_links,
+TileDirection determine_cell_on_face_change(const FaceLinks &face_links,
   const TileDirection &current_tile,
   const int face_size)
 {
@@ -321,11 +329,8 @@ TileDirection determine_cell_on_face_change(FaceLinks &face_links,
   const int face = current_tile.first.first;
   const Direction current_heading{ current_tile.second };
 
-  const int current_face_and_direction = face * ten + static_cast<int>(current_heading);
-
-  auto next_face_and_direction = face_links[current_face_and_direction];
-  auto next_face = next_face_and_direction / ten;
-  const Direction next_heading{ static_cast<Direction>(next_face_and_direction % ten) };
+  auto [next_face, next_heading] =
+    face_links[static_cast<size_t>(face)][static_cast<size_t>(current_heading)];
 
   TileDirection next_tile{ { next_face, { 0, 0 } }, next_heading };
 
@@ -375,7 +380,7 @@ TileDirection determine_cell_on_face_change(FaceLinks &face_links,
   }
 
   if (current_heading == Direction::right && next_heading == Direction::up) {
-    next_tile.first.second.first = face_size-1;
+    next_tile.first.second.first = face_size - 1;
     next_tile.first.second.second = current_tile.first.second.first;
     return next_tile;
   }
@@ -459,7 +464,7 @@ MapCube initialise_map_cube(const Board &board, const size_t face_size)
   return map_cube;
 }
 
-bool make_3d_move(const MapCube &map_cube, TileDirection &tile, FaceLinks &face_links)
+bool make_3d_move(const MapCube &map_cube, TileDirection &tile, const FaceLinks &face_links)
 {
 
   if (map_cube.empty()) { return false; }
@@ -508,7 +513,7 @@ bool make_3d_move(const MapCube &map_cube, TileDirection &tile, FaceLinks &face_
   return true;
 }
 
-TileDirection do_3d_moves(const Moves &moves, const MapCube &map_cube, FaceLinks &face_links)
+TileDirection do_3d_moves(const Moves &moves, const MapCube &map_cube, const FaceLinks &face_links)
 {
 
   TileDirection current_position{ { 1, { 0, 0 } }, Direction::right };
@@ -525,7 +530,7 @@ TileDirection do_3d_moves(const Moves &moves, const MapCube &map_cube, FaceLinks
     const Rotation turn = move.second;
 
     if (turn == Rotation::terminate) {
-      return current_position; // all done, just return where we are.
+      return current_position;// all done, just return where we are.
     }
 
     if (turn == Rotation::left) {
@@ -565,21 +570,22 @@ TileDirection do_3d_moves(const Moves &moves, const MapCube &map_cube, FaceLinks
     }
   }
 
-  return TileDirection{}; // we shouldn't get here so if we do return an empty TileDirection!
+  return TileDirection{};// we shouldn't get here so if we do return an empty TileDirection!
 }
 
-int calculate_3d_password(const TileDirection &tile, FaceOrigins &face_origins) { 
-  int password {-1};
-  if(tile.first.first == 0) { return password;}
-  const auto face_origin = face_origins[tile.first.first]; //
+int calculate_3d_password(const TileDirection &tile, FaceOrigins &face_origins)
+{
+  int password{ -1 };
+  if (tile.first.first == 0) { return password; }
+  const auto face_origin = face_origins[tile.first.first];//
 
-  const int y_offset {face_origin.first + tile.first.second.first + 1}; 
-  const int x_offset {face_origin.second + tile.first.second.second + 1};
-  const int direction_value {static_cast<int>(tile.second)};
+  const int y_offset{ face_origin.first + tile.first.second.first + 1 };
+  const int x_offset{ face_origin.second + tile.first.second.second + 1 };
+  const int direction_value{ static_cast<int>(tile.second) };
 
-  constexpr int y_multiplier {1000};
-  constexpr int x_multiplier {4};
+  constexpr int y_multiplier{ 1000 };
+  constexpr int x_multiplier{ 4 };
 
   password = y_offset * y_multiplier + x_offset * x_multiplier + direction_value;
-  return password; 
+  return password;
 }
