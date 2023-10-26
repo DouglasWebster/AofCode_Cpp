@@ -427,7 +427,7 @@ TEST_CASE(" testing part 2", "[day22]")
   {
     FaceOrigins result{ determine_face_origins(test_board, 4) };
 
-    CHECK(result.size() == 6);
+    CHECK(result.size() == 7);
 
     CHECK(result[1] == std::make_pair(0, 8));
     CHECK(result[2] == std::make_pair(4, 0));
@@ -450,7 +450,7 @@ TEST_CASE(" testing part 2", "[day22]")
 
     FaceOrigins puzzle_results{ determine_face_origins(puzzle_board) };
 
-    CHECK(puzzle_results.size() == 6);
+    CHECK(puzzle_results.size() == 7);
 
     CHECK(puzzle_results[1] == std::make_pair(0, 50));
     CHECK(puzzle_results[2] == std::make_pair(0, 100));

@@ -420,8 +420,10 @@ FaceOrigins determine_face_origins(const Board &board, const size_t face_size)
   const size_t board_x_extent{ board[0].size() };
   const size_t board_y_extent{ board.size() };
 
-  FaceOrigins face_origins{};
-  int face{ 1 };
+  constexpr int faces{ 7 };// the zero face is a dummy to allow faces to be referenced 1 - 6;
+  FaceOrigins face_origins(faces, Cell(std::make_pair(0, 0)));
+
+  size_t face{ 1 };
   for (size_t y_offset{ 0 }; y_offset < board_y_extent; y_offset += face_size) {
     for (size_t x_offset{ 0 }; x_offset < board_x_extent; x_offset += face_size) {
       if (board[y_offset][x_offset] == ' ') { continue; }
@@ -573,11 +575,11 @@ TileDirection do_3d_moves(const Moves &moves, const MapCube &map_cube, const Fac
   return TileDirection{};// we shouldn't get here so if we do return an empty TileDirection!
 }
 
-int calculate_3d_password(const TileDirection &tile, FaceOrigins &face_origins)
+int calculate_3d_password(const TileDirection &tile, const FaceOrigins &face_origins)
 {
   int password{ -1 };
   if (tile.first.first == 0) { return password; }
-  const auto face_origin = face_origins[tile.first.first];//
+  const auto face_origin = face_origins[static_cast<size_t>(tile.first.first)];//
 
   const int y_offset{ face_origin.first + tile.first.second.first + 1 };
   const int x_offset{ face_origin.second + tile.first.second.second + 1 };

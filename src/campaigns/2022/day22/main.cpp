@@ -39,7 +39,7 @@ int main()
 
   // Part 2 solution
   const FaceLinks face_links{initialise_face_directions()};
-  FaceOrigins face_origins{determine_face_origins(board)};
+  const FaceOrigins face_origins{determine_face_origins(board)};
   const MapCube map_cube {initialise_map_cube(board)};
   const TileDirection final_tile{do_3d_moves(moves, map_cube, face_links)};
   const int part2_password{calculate_3d_password(final_tile, face_origins)};

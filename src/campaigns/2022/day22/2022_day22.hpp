@@ -102,7 +102,7 @@ using Cell = std::pair<int, int>;
 using Tile = std::pair<int, Cell>;
 using TileDirection = std::pair<Tile, Direction>;
 using MapCube = std::vector<std::vector<std::vector<char>>>; // face -> row -> column -> # or .
-using FaceOrigins = std::map<int, Cell>;
+using FaceOrigins = std::vector<Cell>;
 using FaceLinks = std::vector<std::vector<std::pair<int, Direction>>>; // Face, Edge -> face, direction 
 
 /**
@@ -179,5 +179,5 @@ TileDirection do_3d_moves(const Moves & moves, const MapCube &map_cube, const Fa
  * @param face_origins the mapping of a faces [0, 0] to the board location.
  * @return int the password generated.
  */
-int calculate_3d_password( const TileDirection & tile, FaceOrigins & face_origins) ;
+int calculate_3d_password( const TileDirection & tile, const FaceOrigins & face_origins) ;
 
