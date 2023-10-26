@@ -135,7 +135,7 @@ int make_move(const Board &board, const Move &move_to, Location current_location
       }
     }
 
-    auto restart_tile = movement_tiles[static_cast<size_t>(restart_position)];
+    auto restart_tile = movement_tiles[restart_position];
     if (restart_tile == '.') {
       current_position = static_cast<int>(restart_position);
       continue;
@@ -421,7 +421,7 @@ FaceOrigins determine_face_origins(const Board &board, const size_t face_size)
   const size_t board_y_extent{ board.size() };
 
   constexpr int faces{ 7 };// the zero face is a dummy to allow faces to be referenced 1 - 6;
-  FaceOrigins face_origins(faces, Cell(std::make_pair(0, 0)));
+  FaceOrigins face_origins(faces, std::make_pair(0, 0));
 
   size_t face{ 1 };
   for (size_t y_offset{ 0 }; y_offset < board_y_extent; y_offset += face_size) {
