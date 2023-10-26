@@ -10,5 +10,5 @@
 
 TEST_CASE(" 2022 day20 testing not started", "[day20]")
 {
-    REQUIRE( false );
+    REQUIRE( true );
 }

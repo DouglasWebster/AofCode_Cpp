@@ -210,7 +210,7 @@ TEST_CASE(" testing part 2", "[day22]")
     CHECK(test_links[2][down] == std::make_pair(face_5, Direction::up));
     CHECK(test_links[3][right] == std::make_pair(face_4, Direction::right));
     CHECK(test_links[4][left] == std::make_pair(face_3, Direction::left));
-    CHECK(test_links[5][right] != std::make_pair(face_2, Direction::down));
+    CHECK_FALSE(test_links[5][right] == std::make_pair(face_2, Direction::down));
     CHECK(test_links[6][up] == std::make_pair(face_4, Direction::left));
 
     CHECK(problem_links.size() == 7);  // don't forget to count the dummy zero'th face!
@@ -218,7 +218,7 @@ TEST_CASE(" testing part 2", "[day22]")
     CHECK(problem_links[2][down] == std::make_pair(face_3, Direction::left));
     CHECK(problem_links[3][right] == std::make_pair(face_2, Direction::up));
     CHECK(problem_links[4][left] == std::make_pair(face_1, Direction::right));
-    CHECK(problem_links[5][right] != std::make_pair(face_3, Direction::up));
+    CHECK_FALSE(problem_links[5][right] == std::make_pair(face_3, Direction::up));
     CHECK(problem_links[6][up] == std::make_pair(face_4, Direction::up));
   }
 
