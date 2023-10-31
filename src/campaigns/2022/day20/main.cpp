@@ -18,7 +18,7 @@ int main()
   Items items{create_item_list(raw_vector)};
 
   make_moves(items);
-  const int coordinate_sum{calculate_coordinate_sum(items)};
+  const int64_t coordinate_sum{calculate_coordinate_sum(items)};
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
