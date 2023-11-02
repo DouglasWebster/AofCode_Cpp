@@ -2,6 +2,8 @@
 
 #include <list>
 #include <string>
+#include <tuple>
+
 
 #include <AofCode_Cpp/aoc_library.hpp>
 
@@ -10,12 +12,19 @@ inline constexpr std::string_view campaign_year = "2022";
 inline constexpr std::string_view campaign_day = "day20";
 }// namespace AofCode_Cpp::cmake
 
-using Item = std::pair<int64_t, bool>;
+using OriginalPosition = size_t;
+using Value = int64_t;
+using Item = std::pair<Value, OriginalPosition>;
 using Items = std::vector<Item>;
 
-using Locations = std::vector<int>;
+using CurrentPosition = size_t;
+using Locations = std::vector<CurrentPosition>;
 
-Items create_item_list(const AoCLib::int_data &data);
 
-void make_moves(Items &items);
-int64_t calculate_coordinate_sum(const Items &items);
+auto create_item_vectors(const AoCLib::int_data &data) -> std::tuple<Items, Locations>;
+
+void make_moves(Items &items, Locations &Locations);
+Value calculate_coordinate_sum(const Items &items);
+
+
+void apply_decryption_key (Items & items, int64_t key);

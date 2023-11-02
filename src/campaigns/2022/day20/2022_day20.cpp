@@ -6,106 +6,93 @@
 #include <fstream>
 #include <numeric>
 
-Items create_item_list(const AoCLib::int_data &data)
+auto create_item_vectors(const AoCLib::int_data &data) -> std::tuple<Items, Locations>
 {
-  if (data.empty()) { return Items{}; }
+  if (data.empty()) { return { Items{}, Locations{} }; }
 
   Items items{};
 
-  for (auto value : data) {
-    const Item item{ value[0], false };
+  for (auto start_position{ 0 }; auto value : data) {
+    const Item item{ value[0], start_position };
     items.push_back(item);
+    ++start_position;
   }
 
-  return items;
+  Locations locations(items.size());
+  std::iota(locations.begin(), locations.end(), 0);
+
+
+  return { items, locations };
 }
 
-// NOLINTBEGIN(readability-function-cognitive-complexity)
-void make_moves(Items &items)
+//  NOLINTBEGIN(readability-function-cognitive-complexity, useStlAlgorithm)
+void make_moves(Items &items, Locations &locations)
 {
+  const auto data_length{ items.size() };
+  const auto last_position{ data_length - 1 };
 
-  const int total_moves{ static_cast<int>(items.size()) };
-  const int data_length{ static_cast<int>(items.size()) };
-  const int last_position{ data_length - 1 };
-
-  Locations locations(static_cast<size_t>(total_moves));
-  std::iota(locations.begin(), locations.end(), 0); // keep track of how the locations move.
-  const int64_t first_value {items[0].first};
-  const int64_t last_value {items[static_cast<size_t>(last_position)].first};
-  int zero_position{0};
-  for (auto item : items) {
-    if (item.first == 0) { break; }
-    ++zero_position;
+#ifdef CATCH2_ACTIVE
+  const int64_t first_value{ items[locations.front()].first };
+  const int64_t last_value{ items[locations.back()].first };
+  size_t zero_position{ 0 };
+  
+  for (auto location : locations) {
+    if (items[location].first == 0) { zero_position = items[location].second; }  // cppcheck-suppress useStlAlgorithm
   }
 
-  std::cout << "Tracking " << first_value << ", " << last_value << " and " << zero_position << '\n';
+  std::cout << "Tracking " << first_value << ", " << last_value << " and 0 at position " << zero_position << '\n';
+#endif
 
+  for (auto check_value{ 0 }; auto item_position : locations) {
+    auto [data, original_position] = items[item_position];
 
+    assert(check_value == static_cast<int>(original_position));
+    ++check_value;
 
-  size_t current_position{ 0 };
-  for (int move{ 0 }; move < total_moves; ++move) {
-    const auto [data, already_moved] = items[current_position];
-    const auto current_location = locations[current_position];
-    if (already_moved) {
-      ++current_position;
-      --move;// this move doesn't count!
-      continue;
-    }
+    if (data == 0) { continue; }// no movement so move on to the next.
 
-    if (data == 0) {
-      items[current_position].second = true;
-      ++current_position;
-      continue;
-    }
-
-    const auto cycles{ std::ldiv(data + static_cast<int64_t>(current_position), last_position) };
-
+    const auto cycles{ std::ldiv(
+      data + static_cast<int64_t>(item_position), static_cast<int64_t>(last_position)) };
     auto new_position = cycles.rem;
 
-    if (new_position < 0) { new_position = last_position + new_position; }
-    if (new_position == 0 || new_position == last_position) {
-      new_position = (new_position == 0) ? last_position : 0;
+    if (new_position < 0) { new_position = static_cast<int>(last_position) + new_position; }
+    if (new_position == 0 || new_position == static_cast<int>(last_position)) {
+      new_position = (new_position == 0) ? static_cast<int>(last_position) : 0;
     }
 
-    auto new_data_position{ static_cast<size_t>(new_position) };
+    auto new_abs_position = static_cast<size_t>(new_position);  // just to avoid lots of static_casts;
 
-    if (new_data_position > current_position) {// move forward
-      for (auto source_position{ current_position }; source_position < new_data_position;
+    if (new_abs_position > item_position) {// move forward by moving items above it down.
+      for (auto source_position{ item_position }; source_position < new_abs_position;
            ++source_position) {
         items[source_position] = items[source_position + 1];
-        locations[source_position] = locations[source_position +1];
+        locations[items[source_position + 1].second] = source_position;
       }
-    } else {// move backward
-      for (auto destination_position{ current_position }; destination_position > new_data_position;
+    } else {// move backward by moving items below it up
+      for (auto destination_position{ item_position }; destination_position > new_abs_position;
            --destination_position) {
         items[destination_position] = items[destination_position - 1];
-        locations[destination_position] = locations[destination_position - 1];
+        locations[items[destination_position - 1].second] = destination_position;
       }
-      ++current_position;
     }
-    items[new_data_position].first = data;
-    items[new_data_position].second = true;
-    locations[new_data_position] = current_location;
+    items[new_abs_position].first = data;
+    items[new_abs_position].second = original_position;
+    locations[original_position] = new_abs_position;
   }
 
-  for (auto position{ 0 }; auto item : items) {
-    if (!item.second) {
-      std::cout << "missed " << item.first << " at position " << position << '\n';
-    }
-    ++position;
-  }
+#ifdef CATCH2_ACTIVE
+  std::cout << "result : {";
+  for (auto item : items) { std::cout << '{' << item.first << ", " << item.second << "}, "; }
+  std::cout << "\b\b}\n";
 
-  for (size_t location{0}; auto initial_position : locations) {
-    
-    if (initial_position == 0)  { assert( items[location].first ==  first_value);}
-    if (initial_position == zero_position)  { assert( items[location].first ==  0);}
-    if (initial_position == last_position)  { assert( items[location].first ==  last_value);}
-    ++location;
-  }
+  assert(items[locations.front()].first == first_value);
+  assert(items[locations.back()].first == last_value);
+  assert(items[locations[zero_position]].first == 0);
+#endif
 }
-// NOLINTEND(readability-function-cognitive-complexity)
+// NOLINTEND(readability-function-cognitive-complexity, useStlAlgorithm)
 
-int64_t calculate_coordinate_sum(const Items &items)
+Value calculate_coordinate_sum(const Items &items)
 {
   constexpr int offset_1{ 1000 };
   constexpr int offset_2{ 2000 };
@@ -124,4 +111,10 @@ int64_t calculate_coordinate_sum(const Items &items)
 
   return items[first_coord_pos].first + items[second_coord_pos].first
          + items[third_coord_pos].first;
+}
+
+void apply_decryption_key(Items &items, int64_t key) {
+  for (auto &item : items ) {
+    item.first *= key;
+  }
 }
