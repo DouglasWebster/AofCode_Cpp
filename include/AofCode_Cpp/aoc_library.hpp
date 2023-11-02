@@ -39,7 +39,6 @@ using char_data = std::vector<std::vector<char>>;
  * @brief vectorise each line of the input into a vector of char.
  * 
  * @param file_name the path to the file containing the raw data.
- * @param delimiter the character used to determine where to split the line - defaults to a space.
  * @return str_data a std::vector<std::vector<std::string>>
  * 
  * @note The function returns and empty vector if it is unable to open the file.
