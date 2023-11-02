@@ -31,6 +31,8 @@ target_include_directories(
     2022_day20_test 
     PRIVATE ${CMAKE_SOURCE_DIR}/src/campaigns/2022/day20)
 
+target_compile_definitions(2022_day20_test PRIVATE CATCH2_ACTIVE)
+
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
 # to whatever you want, or use different for different binaries
 catch_discover_tests(
