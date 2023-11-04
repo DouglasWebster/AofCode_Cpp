@@ -2,10 +2,23 @@
 
 #include "2022_day21.hpp"
 
-int main() {
-    std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " " << AofCode_Cpp::cmake::campaign_day << '\n';
-    std::cout << "Part 1 solution:\n";
-    std::cout << "Part 2 solution:\n";
+int main()
+{
 
-    return 0;
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/input.txt";
+
+  const AoCLib::str_data raw_vector{ AoCLib::vectorise_string_data(data_file) };
+
+  MonkeyData monkey_data{ create_data_vector(raw_vector) };
+
+  build_tree_links(monkey_data);
+  const int part_1_solution{ calculate_part_1(monkey_data) };
+
+  std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
+            << AofCode_Cpp::cmake::campaign_day << '\n';
+  std::cout << "Part 1 solution: " << part_1_solution << '\n';
+  std::cout << "Part 2 solution:\n";
+
+  return 0;
 }
