@@ -28,6 +28,7 @@ struct MonkeyInfo {
     std::string rh_name{};
     size_t lh_vector_index {0};
     size_t rh_vector_index {0};
+    size_t parent{0};
 };
 
 using MonkeyData = std::vector<MonkeyInfo>;
@@ -50,6 +51,13 @@ auto create_data_vector(const AoCLib::str_data &data) -> MonkeyData;
  */
 auto build_tree_links(MonkeyData &monkey_data) -> void;
 
+/**
+ * @brief Get the root index object
+ * 
+ * @param monkey_data 
+ * @return int64_t the index where the "root" monkey is located
+ */
+auto get_root_index(const MonkeyData &monkey_data) -> size_t;
 
 /**
  * @brief do a recursive calculation staring at "root"
@@ -58,4 +66,6 @@ auto build_tree_links(MonkeyData &monkey_data) -> void;
  * @param start_index the starting position of the calculation;
  * @return int the value of the calculation from the starting index
  */
-auto calculate_part_1 (const MonkeyData & monkey_data, size_t start_index = 0) -> int;
+auto calculate_totals (const MonkeyData & monkey_data, size_t start_index = 0) -> int64_t;
+
+

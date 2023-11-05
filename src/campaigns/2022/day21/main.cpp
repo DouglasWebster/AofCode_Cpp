@@ -13,7 +13,7 @@ int main()
   MonkeyData monkey_data{ create_data_vector(raw_vector) };
 
   build_tree_links(monkey_data);
-  const int part_1_solution{ calculate_part_1(monkey_data) };
+  const int64_t part_1_solution{ calculate_totals(monkey_data, get_root_index(monkey_data)) };
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
