@@ -45,6 +45,13 @@ using char_data = std::vector<std::vector<char>>;
  */
 [[nodiscard]] char_data vectorise_char_data(const std::string &file_name) noexcept;
 
+/**
+ * @brief given a string split it into a vector of string of a given size.
+ * 
+ * @param str the string to be split
+ * @param chunk_size the size of each chunk
+ * @return std::vector<std::string> 
+ */
 std::vector<std::string> split_string_into_chunks(const std::string &str, size_t chunk_size);
 
 }// namespace AoCLib

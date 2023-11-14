@@ -10,5 +10,23 @@
 
 TEST_CASE(" 2022 day23 testing not started", "[day23]")
 {
-    REQUIRE( false );
+
+  std::vector<std::string> test_data{ { ".............." },
+    { ".............." },
+    { ".......#......" },
+    { ".....###.#...." },
+    { "...#...#.#...." },
+    { "....#...##...." },
+    { "...#.###......" },
+    { "...##.#.##...." },
+    { "....#..#......" },
+    { ".............." },
+    { ".............." },
+    { ".............." } };
+
+  GroveMap initial_map{};
+
+  for (auto row : test_data) { initial_map.push_back(std::vector<char>{ row.begin(), row.end() }); }
+
+  REQUIRE(true);
 }

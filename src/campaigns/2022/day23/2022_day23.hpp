@@ -9,3 +9,5 @@ namespace AofCode_Cpp::cmake {
     inline constexpr std::string_view campaign_day = "day23";
 } //namespace AofCode::cmake
 
+using GroveMap = std::vector<std::vector<char>>;
+
