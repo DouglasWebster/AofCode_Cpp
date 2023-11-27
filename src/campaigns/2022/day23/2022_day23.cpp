@@ -90,7 +90,7 @@ MovementMap mark_allowable_positions(GroveMap &map, const Direction first_direct
 {
   if (map.empty()) { MovementMap{}; }
 
-  MovementMap movement_map(map[0].size(), std::vector<Direction>(map.size(), Direction::stay_put));
+  MovementMap movement_map(map.size(), std::vector<Direction>(map[0].size(), Direction::stay_put));
   constexpr unsigned int no_match{ 0 };
 
   const size_t last_row_position{ map.size() - 1 };
@@ -209,9 +209,10 @@ unsigned int which_directions(const GroveMap &map, const Vector2dPosition &locat
 }
 
 //  NOLINTBEGIN(readability-function-cognitive-complexity)
-void do_movement(GroveMap &grove_map, const MovementMap &movement_map)
+bool do_movement(GroveMap &grove_map, const MovementMap &movement_map)
 {
-  if (grove_map.empty() || movement_map.empty()) { return; }
+  bool some_movement{false};
+  if (grove_map.empty() || movement_map.empty()) { return false; }
 
   const size_t last_movement_col{ movement_map[0].size() - 1 };
   const size_t last_movement_row{ movement_map.size() - 1 };
@@ -220,6 +221,7 @@ void do_movement(GroveMap &grove_map, const MovementMap &movement_map)
     for (size_t movement_col{ 1 }; movement_col < last_movement_col; movement_col++) {
       if (movement_map[movement_row][movement_col] == Direction::stay_put) { continue; }
 
+      some_movement = true;
       switch (movement_map[movement_row][movement_col]) {
       case Direction::north:
         if (grove_map[movement_row - 1][movement_col] == 'A') {
@@ -258,6 +260,8 @@ void do_movement(GroveMap &grove_map, const MovementMap &movement_map)
       if (item != '#') { item = '.'; }
     }
   }
+
+  return some_movement;
 }
 //  NOLINTEND(readability-function-cognitive-complexity)
 
@@ -266,10 +270,10 @@ int count_empty_ground(const GroveMap &grove_map)
   const GroveExtent search_area{ get_map_extent(grove_map) };
 
   int space_count{ 0 };
-  const auto row_start{ search_area.first.second };
-  const auto row_size{ search_area.second.second };
-  const auto col_start{ search_area.first.first };
-  const auto col_size{ search_area.second.first };
+  const auto row_start{ search_area.first.first };
+  const auto row_size{ search_area.second.first };
+  const auto col_start{ search_area.first.second };
+  const auto col_size{ search_area.second.second };
 
   for (size_t row_offset{ 0 }; row_offset < row_size; ++row_offset) {
     for (size_t col_offset{ 0 }; col_offset < col_size; ++col_offset) {

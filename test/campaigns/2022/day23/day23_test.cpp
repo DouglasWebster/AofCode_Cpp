@@ -8,7 +8,7 @@
 
 // start with a test case that does nothing but fail.
 
-TEST_CASE(" 2022 day23 testing not started", "[day23]")
+TEST_CASE(" 2022 day23 part 1 tests", "[day23]")
 {
 
   std::vector<std::string> test_data{ { ".............." },
@@ -146,7 +146,7 @@ TEST_CASE(" 2022 day23 testing not started", "[day23]")
     CHECK_THAT(grove_map, Catch::Matchers::Equals(first_result_map));
 
     auto prefered_direction{Direction::north};
-    for(auto counter{0}; counter < 10; ++counter){
+    for(auto counter{0}; counter < 9; ++counter){
       switch (prefered_direction)
       {
       case Direction::north:
@@ -165,6 +165,8 @@ TEST_CASE(" 2022 day23 testing not started", "[day23]")
         break;
       }
 
+      grove_map = create_next_map(grove_map);
+
       MovementMap movement_map{mark_allowable_positions(grove_map, prefered_direction)};
       do_movement(grove_map, movement_map);
       std::cout << "pass " << counter +2 << '\n';
@@ -175,10 +177,68 @@ TEST_CASE(" 2022 day23 testing not started", "[day23]")
         std::cout << '\n';
       }
       std::cout << '\n';
+      
     }
 
     int empty_spaces{count_empty_ground(grove_map)};
 
     CHECK(empty_spaces == 110);
+  }
+}
+
+TEST_CASE(" 2022 day23 part 2 tests", "[day23]")
+{
+
+  std::vector<std::string> test_data{ { ".............." },
+    { ".............." },
+    { ".......#......" },
+    { ".....###.#...." },
+    { "...#...#.#...." },
+    { "....#...##...." },
+    { "...#.###......" },
+    { "...##.#.##...." },
+    { "....#..#......" },
+    { ".............." },
+    { ".............." },
+    { ".............." } };
+
+  GroveMap initial_map{};
+
+  for (auto row : test_data) { initial_map.push_back(std::vector<char>{ row.begin(), row.end() }); }
+
+  SECTION("check movement and space counting")
+  {
+    Direction prefered_direction {Direction::north};
+    GroveMap grove_map{ create_next_map(initial_map) };
+    MovementMap move_map{ mark_allowable_positions(grove_map, prefered_direction) };
+
+    int round {1}; 
+
+    while(do_movement(grove_map, move_map)) {
+      round++;
+
+      switch (prefered_direction)
+      {
+      case Direction::north:
+        prefered_direction = Direction::south;
+        break;
+      case Direction::south:
+        prefered_direction = Direction::west;
+        break;
+      case Direction::west:
+        prefered_direction = Direction::east;
+        break;
+      case Direction::east:
+        prefered_direction = Direction::north;
+        break;     
+      default:
+        break;
+      }
+      
+      grove_map = create_next_map(grove_map);
+      move_map = mark_allowable_positions(grove_map, prefered_direction);
+    };
+
+    CHECK(round == 20);
   }
 }

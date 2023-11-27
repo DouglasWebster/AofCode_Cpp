@@ -80,7 +80,7 @@ unsigned int which_directions(const GroveMap & map, const Vector2dPosition & loc
  * After all movements have been carried out it resets the grove map so that all spaces not occupied by an elve is
  * marked as free.
  */
-void do_movement(GroveMap & grove_map, const MovementMap & movement_map);
+bool do_movement(GroveMap & grove_map, const MovementMap & movement_map);
 
 /**
  * @brief count the empty ground in the grove map
