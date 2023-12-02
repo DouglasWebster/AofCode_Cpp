@@ -48,6 +48,29 @@ AoCLib::int_data AoCLib::vectorise_int_data(const std::string &file_name) noexce
   return data;
 }
 
+
+AoCLib::line_data AoCLib::vectorise_line_data(const std::string &file_name) noexcept
+{
+  line_data data{};
+  if (file_name.empty()) { return data; }
+
+  std::ifstream source_file{ file_name };
+  if (!source_file) {
+    std::cerr << "AoCLib Error: int data file " << file_name << " could not be opened.\n";
+    return data;
+  }
+
+  while (source_file && !source_file.eof()) {
+    std::string line_read;
+    std::getline(source_file, line_read);
+
+    data.push_back(line_read);
+  }
+
+  return data;
+}
+
+
 AoCLib::str_data AoCLib::vectorise_string_data(const std::string &file_name,
   const char delimiter) noexcept
 {
@@ -123,9 +146,7 @@ std::vector<std::string> AoCLib::split_string_at_delimter(const std::string &str
     tokens.push_back(token);
     char next_char{};
     tokenStream.get(next_char);
-    while (next_char == ' ' ) {
-      tokenStream.get(next_char);
-    }
+    while (next_char == ' ') { tokenStream.get(next_char); }
     tokenStream.putback(next_char);
   }
 

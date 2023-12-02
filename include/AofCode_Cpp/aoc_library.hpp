@@ -11,6 +11,7 @@
 namespace AoCLib {
 
 using int_data = std::vector<std::vector<int>>;
+using line_data = std::vector<std::string>;
 using str_data = std::vector<std::vector<std::string>>;
 using char_data = std::vector<std::vector<char>>;
 
@@ -26,6 +27,16 @@ using char_data = std::vector<std::vector<char>>;
 
 /**
  * @brief vectorise each line of the input into a vector of strings.
+ * 
+ * @param file_name the path to the file containing the raw data
+ * @return int_data a std::vector<std::string>
+ * 
+ * @note The function returns and empty vector if it is unable to open the file.
+ */
+[[nodiscard]] line_data vectorise_line_data(const std::string & file_name) noexcept;
+
+/**
+ * @brief vectorise each line of the input into a vector of vector strings.
  * 
  * @param file_name the path to the file containing the raw data.
  * @param delimiter the character used to determine where to split the line - defaults to a space.
