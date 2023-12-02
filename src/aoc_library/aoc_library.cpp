@@ -1,9 +1,10 @@
 #include <AofCode_Cpp/aoc_library.hpp>
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <algorithm>
+#include <string>
 
 
 std::string removeLeadingSpaces(const std::string &input)
@@ -93,7 +94,7 @@ AoCLib::char_data AoCLib::vectorise_char_data(const std::string &file_name) noex
     std::string line_read;
     std::getline(source_file, line_read);
 
-    const std::vector<char>words(line_read.begin(), line_read.end());
+    const std::vector<char> words(line_read.begin(), line_read.end());
 
     data.push_back(words);
   }
@@ -101,11 +102,32 @@ AoCLib::char_data AoCLib::vectorise_char_data(const std::string &file_name) noex
   return data;
 }
 
-std::vector<std::string> AoCLib::split_string_into_chunks(const std::string &str, size_t chunk_size) {
-    std::vector<std::string> result;
-    for(size_t chunk_start{0}; chunk_start < str.length(); chunk_start += chunk_size) {
-        result.push_back(str.substr(chunk_start, chunk_size));
-    }
+std::vector<std::string> AoCLib::split_string_into_chunks(const std::string &str, size_t chunk_size)
+{
+  std::vector<std::string> result;
+  for (size_t chunk_start{ 0 }; chunk_start < str.length(); chunk_start += chunk_size) {
+    result.push_back(str.substr(chunk_start, chunk_size));
+  }
 
-    return result;
+  return result;
+}
+
+std::vector<std::string> AoCLib::split_string_at_delimter(const std::string &str, char delimiter)
+{
+  std::vector<std::string> tokens{};
+  std::istringstream tokenStream(str);
+  std::string token;
+
+  while (std::getline(tokenStream, token, delimiter)) {
+
+    tokens.push_back(token);
+    char next_char{};
+    tokenStream.get(next_char);
+    while (next_char == ' ' ) {
+      tokenStream.get(next_char);
+    }
+    tokenStream.putback(next_char);
+  }
+
+  return tokens;
 }

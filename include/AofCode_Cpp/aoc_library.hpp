@@ -54,4 +54,12 @@ using char_data = std::vector<std::vector<char>>;
  */
 std::vector<std::string> split_string_into_chunks(const std::string &str, size_t chunk_size);
 
+/**
+ * @brief given a string create a vector of strings using the dilimter as the split poings
+ * 
+ * @param str the string to split into parts
+ * @param delimiter the character where the string is to be split - this is NOT retained.
+ * @return std::vector<std::string> 
+ */
+std::vector<std::string> split_string_at_delimter(const std::string& str, char delimiter);
 }// namespace AoCLib
