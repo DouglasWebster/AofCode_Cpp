@@ -152,3 +152,10 @@ std::vector<std::string> AoCLib::split_string_at_delimter(const std::string &str
 
   return tokens;
 }
+
+std::vector<int> AoCLib::string_to_vector(const std::string &numbers)
+{
+  std::istringstream iss(numbers);
+  std::vector<int> int_vector((std::istream_iterator<int>(iss)), std::istream_iterator<int>());
+  return int_vector;
+}

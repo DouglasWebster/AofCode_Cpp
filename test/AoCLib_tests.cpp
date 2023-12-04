@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_container_properties.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
@@ -292,4 +290,19 @@ TEST_CASE(" verify splitting string into chunks")
   };
 
   CHECK_THAT(AoCLib::split_string_into_chunks(test_string, 6), Catch::Matchers::Equals(expected));
+}
+
+TEST_CASE( "verify creating a vector of integers from a string") {
+  const std::string test_string{"1 2 3 4 80 365"};
+  std::vector<int> test_vector{AoCLib::string_to_vector(test_string)};
+  std::vector<int> expectd{1, 2, 3, 4, 80, 365};
+
+  CHECK_THAT(test_vector, Catch::Matchers::Equals(expectd));
+
+  const std::string test_string2{"1, 2, 3, 4, 80, 365"};
+  std::vector<int> test_vector2{AoCLib::string_to_vector(test_string)};
+  std::vector<int> expectd2{1, 2, 3, 4, 80, 365};
+
+  CHECK_THAT(test_vector2, Catch::Matchers::Equals(expectd2));
+
 }
