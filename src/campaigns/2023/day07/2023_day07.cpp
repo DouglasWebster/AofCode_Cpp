@@ -1,9 +1,32 @@
 #include "2023_day07.hpp"
 #include <algorithm>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <iterator>
 #include <map>
 #include <numeric>
 
+
+void dump_hands(const Hands &hands)
+{
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/card_dump.txt";
+
+  std::ofstream card_dump;
+  card_dump.open(data_file, std::ofstream::out | std::ofstream::trunc);
+
+  for (const auto &hand : hands) {
+    card_dump << "Strength " << hand.strength;
+    card_dump << ", Cards: ";
+    for (auto card : hand.cards) { card_dump << std::setw(3) << card; }
+
+    card_dump << ", Bid: " << std::setw(4) << hand.bid;
+    card_dump << ", Rank: " << std::setw(5) << hand.rank;// NOLINT
+    card_dump << ", Winnings: " << std::setw(7) << hand.winnings << '\n';// NOLINT
+  }
+  card_dump.close();
+}
 
 Hands build_hands(const AoCLib::line_data &hands_data)
 {
@@ -43,11 +66,8 @@ Hands build_hands(const AoCLib::line_data &hands_data)
         break;
       }
     };
-
-    std::sort(cards.begin(), cards.end(), [](auto card1, auto card2) { return card1 > card2; });
-
-
     const Hand hand{ cards, stoi(details[1]) };
+
     hands.push_back(hand);
   }
   return hands;
@@ -72,7 +92,7 @@ void order_hands_by_bid(Hands &hands)
 
     switch (card_count.size()) {
     case 1:
-      hand.strength = HandStrength::Full;
+      hand.strength = HandStrength::Five;
       break;
     case 2:
       hand.strength = (max_no_card == 4) ? HandStrength::Four : HandStrength::Full;
@@ -83,47 +103,51 @@ void order_hands_by_bid(Hands &hands)
     case 4:
       hand.strength = HandStrength::One;
       break;
-    default:
+    case 5:  // NOLINT
       hand.strength = HandStrength::High;
+      break;
+    default:
       break;
     };
 
-    constexpr int64_t value_mutiplier{ 100 };
-    int64_t overall_val{ static_cast<int64_t>(hand.strength) };
-    for (auto card : hand.cards) {
-        overall_val = (overall_val * value_mutiplier + static_cast<int64_t>(card)); 
-    }
-    hand.overall_value = overall_val;
+    std::stable_sort(hands.begin(), hands.end(), [](const Hand &hand1, const Hand &hand2) {
+      return hand1.strength > hand2.strength;
+    });
   }
-
-  std::sort(hands.begin(), hands.end(), [](const Hand &hand1, const Hand &hand2) {
-    return hand1.overall_value > hand2.overall_value;
-  });
-
-  int rank{ 1 };
-  for (auto iter = hands.rbegin(); iter != hands.rend(); ++iter, rank++) { (*iter).rank = rank; }
 }
 
-// void rank_hands(Hands &hands)
-// {
-//   if (hands.empty()) { return; }
-
-//   std::sort(hands.begin(), hands.end(), [](const Hand &hand1, const Hand &hand2) {
-//     if (hand1.strength != hand2.strength) { return false; }// don't alter the sorting by strength
-//     return hand1.overall_value > hand2.overall_value;
-//   });
-
-//   int rank{ 1 };
-//   for (auto iter = hands.rbegin(); iter != hands.rend(); ++iter, rank++) { (*iter).rank = rank; }
-// }
-
-int64_t calculate_winnings(const Hands &hands)
+bool compare_hands(const Hand &hand1, const Hand &hand2)
 {
-  if (hands.empty()) { return 0; }
-
-  int64_t total_winnings{};
-  for (const auto &hand : hands) {
-    total_winnings += static_cast<int64_t>(hand.bid) * static_cast<int64_t>(hand.rank);
+  for (size_t index{}; index < hand1.cards.size(); ++index) {
+    const int hand1_val{ hand1.cards[index] };
+    const int hand2_val{ hand2.cards[index] };
+    if (hand1_val == hand2_val) { continue; }
+    return hand1_val > hand2_val;
   }
-  return total_winnings;
+  return false;
+}
+
+void rank_hands(Hands &hands)
+{
+  if (hands.empty()) { return; }
+
+  std::stable_sort(hands.begin(), hands.end(), [](const Hand &hand1, const Hand &hand2) {
+    if(hand1.strength != hand2.strength) {return false; }
+    for (size_t index{}; index < hand1.cards.size(); ++index) {
+      const int hand1_val{ hand1.cards[index] };
+      const int hand2_val{ hand2.cards[index] };
+      if (hand1_val == hand2_val) { continue; }
+      return hand1_val > hand2_val;
+    }
+    return false;
+  });
+
+
+  int rank{ 1 };
+  for (auto iter = hands.rbegin(); iter != hands.rend(); ++iter, rank++) {
+    (*iter).rank = rank;
+    (*iter).winnings = (*iter).bid * rank;
+  }
+
+  dump_hands(hands);
 }

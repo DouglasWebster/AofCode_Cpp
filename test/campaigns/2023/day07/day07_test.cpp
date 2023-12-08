@@ -31,15 +31,17 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
 
   AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(tmp_file.str()) };
 
-  SECTION( "check the creation of the hands") {
-    Hands hands{build_hands(puzzle_test_data)};
+  SECTION("check the creation of the hands")
+  {
+    Hands hands{ build_hands(puzzle_test_data) };
 
     CHECK(hands.size() == 5);
-    CHECK_THAT(hands[0].cards, Catch::Matchers::Equals(Cards{13,10,3,3,2}));
+    CHECK_THAT(hands[0].cards, Catch::Matchers::Equals(Cards{ 13, 10, 3, 3, 2 }));
     CHECK(hands[0].bid == 765);
   }
 
-  SECTION("check hand strenght sort") {
+  SECTION("check hand strenght sort")
+  {
     Hands hands(build_hands(puzzle_test_data));
     order_hands_by_bid(hands);
 
@@ -50,22 +52,29 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
     CHECK(hands[4].strength == HandStrength::One);
   }
 
-  // SECTION("check hand ranking") {
-  //   Hands hands(build_hands(puzzle_test_data));
-  //   order_hands_by_bid(hands);
-  //   rank_hands(hands);
+  SECTION("check hand ranking")
+  {
+    Hands hands(build_hands(puzzle_test_data));
+    order_hands_by_bid(hands);
+    rank_hands(hands);
 
-  //   CHECK(hands.front().rank == static_cast<int>( hands.size()));
-  //   CHECK(hands.back().rank == 1);
-  // }
+    CHECK(hands.front().rank == static_cast<int>(hands.size()));
+    CHECK(hands.back().rank == 1);
+  }
 
-  SECTION("check calcultion of winnings") {
+  SECTION("check calcultion of winnings")
+  {
 
     Hands hands(build_hands(puzzle_test_data));
     order_hands_by_bid(hands);
-    // rank_hands(hands);
+    rank_hands(hands);
 
-    CHECK(calculate_winnings(hands) == 6440);
+    const int64_t total_winnings{ std::accumulate(
+      hands.begin(), hands.end(), 0, [](int sum, const Hand &hand) {
+        return sum + hand.winnings;
+      }) };
+
+    CHECK(total_winnings == 6440);
   }
 
   // clean up after each test

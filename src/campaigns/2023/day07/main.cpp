@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <numeric>
 
 #include "2023_day07.hpp"
 
@@ -19,9 +20,11 @@ int main()
 
   Hands hands(build_hands(puzzle_data));
   order_hands_by_bid(hands);
-  // rank_hands(hands);
+  rank_hands(hands);
 
-  const int64_t total_winnings{ calculate_winnings(hands) };
+  const int64_t total_winnings{ std::accumulate(hands.begin(), hands.end(), 0, [](int sum, const Hand &hand){
+    return sum + hand.winnings;
+  })};
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
