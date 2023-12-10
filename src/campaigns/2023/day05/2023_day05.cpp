@@ -135,39 +135,79 @@ SourceRanges build_seed_ranges(const std::string &line)
   return seed_ranges;
 }
 
+// NOLINTBEGIN(readability-function-cognitive-complexity)
 RangeMap adjust_mapping(const SourceRanges &source_ranges, const RangeMap &next_level)
 {
   if (source_ranges.empty() || next_level.empty()) { return RangeMap{}; }
 
   RangeMap range_map{};
 
-  for (const auto &garden_range : source_ranges) {
-    auto [range_start, range_end] = garden_range;
+// FIXME: Change the all_links to a std::map to avoid duplicate entries.
+
+  std::vector<GardenRange> all_links{};
+  for (const auto &range_limits : source_ranges) {
+    auto [range_start, range_end] = range_limits;
     for (const auto &mapping : next_level) {
-      auto [source_start, source_end] = mapping.first;
-      if (source_end < range_start) { continue; }
-      auto [destination_start, destination_end] = mapping.second;
-      Mapping new_map{ GardenRange{ range_start, 0 }, GardenRange{ 0, 0 } };
-      const size_t start_offset = range_start - source_start;
-      new_map.second.first = destination_start + start_offset;
-      if (range_end < source_end) {
-        new_map.first.second = range_end;
-        const size_t end_offset = range_end - range_start;
-        new_map.second.second = destination_start + start_offset + end_offset;
-        range_map.push_back(new_map);
-        break;
-      } else { 
-        new_map.first.second = source_end;
-        const size_t end_offset = source_end - range_start;
-        new_map.second.second = destination_start + start_offset + end_offset;
-        range_map.push_back(new_map);
-        range_start = source_end + 1;
-      };
+      auto [_, mapping_end] = mapping.first;
+      if (mapping_end < range_start) { continue; }
+      const size_t link_offset = mapping_end - range_start;
+      const size_t new_link = mapping.second.second - link_offset;
+      all_links.emplace_back(range_start, new_link);
+      break;
     }
+    for (const auto &mapping : next_level) {
+      auto [_, mapping_end] = mapping.first;
+      if (mapping_end < range_end) { continue; }
+      const size_t link_offset = mapping_end - range_start;
+      const size_t new_link = mapping.second.second - link_offset;
+      all_links.emplace_back(range_start, new_link);
+      break;
+    }
+  }
+
+  for(const auto &mapping : next_level) {
+    all_links.emplace_back(mapping.first.first, mapping.second.first);
+    all_links.emplace_back(mapping.first.second, mapping.second.second);
+  }
+
+  std::sort(all_links.begin(), all_links.end(), []( const GardenRange &range_1, const GardenRange &range_2){
+    return range_1.first  < range_2.first;
+  });
+
+  std::vector<size_t> all_range_limits{};
+  for (const auto &mapping : next_level) {
+    all_range_limits.push_back(mapping.first.first);
+    all_range_limits.push_back(mapping.first.second);
+  }
+
+  for (const auto &mapping : source_ranges) {
+    all_range_limits.push_back(mapping.first);
+    all_range_limits.push_back(mapping.second);
+  }
+
+  std::sort(all_range_limits.begin(), all_range_limits.end());
+
+  std::vector<GardenRange> new_garden_ranges{};
+  for (const auto &required_limits : source_ranges) {
+    auto [bottom_limit, top_limit] = required_limits;
+    for (auto const &current_range : all_links) {
+      if (current_range.first < bottom_limit) { continue; }
+      if (current_range.first > top_limit) { break; }
+      new_garden_ranges.push_back(current_range);
+    }
+  }
+
+  for(size_t index{} ; index < new_garden_ranges.size(); index += 2){
+    auto key_start = new_garden_ranges[index].first;
+    auto key_end = new_garden_ranges[index+1].first;
+    auto link_start = new_garden_ranges[index].second;
+    auto link_end =new_garden_ranges[index +1].second;
+    range_map.emplace_back(Mapping({key_start, key_end}, {link_start, link_end}));
   }
 
   return range_map;
 }
+// NOLINTEND(readability-function-cognitive-complexity)
 
 LevelRanges level_ranges(const SourceRanges &seed_ranges, const Catagories &catagories)
 {
