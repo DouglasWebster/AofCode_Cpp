@@ -92,17 +92,18 @@ size_t count_inner_tiles(const LocationTypes &locations)
 {
   if (locations.empty()) { return 0; }
 
-  size_t inner_tiles{};
+  // size_t inner_tiles{};
 
-  for (auto const row : locations) {
-    for (const auto col : row) {
-      // TODO: fill in the code for finding the loop internals.
-    }
-  }
+  // for (auto const row : locations) {
+  //   for (const auto col : row) {
+  //     // TODO: fill in the code for finding the loop internals.
+  //   }
+  // }
+  return 0;
 }
 
 
-size_t count_steps(const MapData &map_data, LocationTypes &locations)
+size_t count_steps(const MapData &map_data)  //, LocationTypes &locations)
 {
   if (map_data.second.empty()) { return size_t{}; }
 

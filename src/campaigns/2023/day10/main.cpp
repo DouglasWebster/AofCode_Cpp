@@ -18,11 +18,11 @@ int main()
     return 0;
   }
 
-  
-    const MapData map_data{build_map_data(puzzle_data)};
-    auto [start_positon, pipes] = map_data;
+  LocationTypes locations{ set_locations(puzzle_data) };
+  const MapData map_data{ build_map_data(puzzle_data, locations) };
+  auto [start_positon, pipes] = map_data;
 
-    const size_t steps{count_steps(map_data) / 2};
+  const size_t steps{ count_steps(map_data) / 2 };
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';

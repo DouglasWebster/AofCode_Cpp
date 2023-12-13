@@ -30,8 +30,9 @@ TEST_CASE(" 2023 day10 testing", "[day10]")
   AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(tmp_file.str()) };
 
   SECTION( "check creation of map") {
+    LocationTypes locations{set_locations(puzzle_test_data)};
 
-    MapData map_data{build_map_data(puzzle_test_data)};
+    MapData map_data{build_map_data(puzzle_test_data, locations)};
     auto [start_positon, pipes] = map_data;
 
     CHECK(pipes[0].size() == 5);
@@ -42,8 +43,9 @@ TEST_CASE(" 2023 day10 testing", "[day10]")
   }
 
   SECTION("check counting steps") {
+    LocationTypes locations{set_locations(puzzle_test_data)};
 
-    MapData map_data{build_map_data(puzzle_test_data)};
+    MapData map_data{build_map_data(puzzle_test_data, locations)};
     auto [start_positon, pipes] = map_data;
 
     CHECK(count_steps(map_data) == 16);
