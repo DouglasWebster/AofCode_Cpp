@@ -18,6 +18,8 @@ int main()
     return 0;
   }
 
+  constexpr size_t multiplier{ 100 };
+
   const Patterns patterns{ get_patterns(puzzle_data) };
 
   size_t column_total{};
@@ -28,12 +30,17 @@ int main()
     column_total += is_vertical_reflection(pattern);
   }
 
-constexpr size_t multiplier{100};
+  size_t repaired_total {};
+
+  for (const auto &pattern : patterns) {
+    const auto [horizontal, vertical] = do_all_repair(pattern);
+    repaired_total += horizontal * multiplier + vertical;
+  }
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
-  std::cout << "Part 1 solution: Notes sum: " << row_total * multiplier + column_total << '\n';
-  std::cout << "Part 2 solution: \n";
+  std::cout << "Part 1 solution: Unrepaired sum: " << row_total * multiplier + column_total << '\n';
+  std::cout << "Part 2 solution:   Repaired sum: " << repaired_total << '\n';
 
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - time_start);

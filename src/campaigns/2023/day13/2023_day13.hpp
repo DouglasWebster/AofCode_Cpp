@@ -42,5 +42,41 @@ size_t is_horizontal_reflection(const Pattern &pattern);
  */
 size_t is_vertical_reflection(const Pattern &pattern);
 
+/**
+ * @brief determine if there is a horizontal line of symetry and if so where it occurs
+ * after dooing one only repair;
+ *  
+ * @param pattern 
+ * @return size_t 
+ */
+size_t is_repaired_horizontal_reflection(const Pattern & pattern);
+
+/**
+ * @brief determine if there is a vertical line of symetry and if so where it occurs
+ * after dooing one only repair;
+ *  
+ * @param pattern 
+ * @return size_t 
+ */
+size_t is_repaired_vertical_reflection(const Pattern & pattern);
+
+/**
+ * @brief return first = true if repaired and second = line of relexion;
+ * 
+ */
+using Repair = std::pair<Axis, size_t>;
+
+/**
+ * @brief repair just one mirror in a pattern.  
+ * 
+ * @param pattern 
+ * @return Repair 
+ * 
+ * @note the repair tries to repair the horizontal axis and if that fails it tries to repair on the 
+ * vertical axis.
+ */
+Repair do_repair(const Pattern &pattern);
+
+std::pair<size_t, size_t> do_all_repair(const Pattern & pattern);
 
 

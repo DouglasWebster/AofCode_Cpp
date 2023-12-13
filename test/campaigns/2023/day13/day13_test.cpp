@@ -76,18 +76,17 @@ TEST_CASE(" 2023 day13 testing", "[day12]")
 
   }
 
-  SECTION("check horizontal reflection with repair ") {
+    SECTION("check vertical reflection with repair") {
     Patterns patterns(get_patterns(puzzle_test_data));
 
-    CHECK(is_horizontal_reflection(patterns[0], true) == 3);
-    CHECK(is_horizontal_reflection(patterns[1], true) == 1);
-  }
-
-  SECTION("check vertical reflection with repair") {
-    Patterns patterns(get_patterns(puzzle_test_data));
+    Repair repair_1{do_repair(patterns[0])};
+    Repair repair_2{do_repair(patterns[1])};
     
-    CHECK(is_vertical_reflection(patterns[0], true) == 0);
-    CHECK(is_vertical_reflection(patterns[1], true) == 0);
+    CHECK(repair_1.first == Axis::Horizontal);
+    CHECK(repair_1.second == 3 );
+
+    CHECK(repair_2.first == Axis::Horizontal);
+    CHECK(repair_2.second == 1 );
 
   }
 
