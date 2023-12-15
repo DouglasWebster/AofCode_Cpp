@@ -64,14 +64,13 @@ using SourceRanges = std::vector<GardenRange>;
 SourceRanges build_seed_ranges(const std::string &line);
 
 /**
- * @brief given a vector of GardenRanges construct a new RangeMap for the 
- * intersection of the sources and the next level 
+ * @brief given the source ranges and a vector of GardenRanges reset the source ranges to 
+ * match those in the GardenRanges
  * 
  * @param source_ranges the GardenRange to build from
  * @param next_level a new RangeMap of possible GardenRanges
- * @return RangeMap 
  */
-RangeMap adjust_mapping(const SourceRanges & source_ranges, const RangeMap & next_level);
+void adjust_mapping(SourceRanges & source_ranges, const RangeMap & next_level);
 
 using LevelRange = std::pair<size_t, Mapping>;
 using LevelRanges = std::vector<LevelRange>;

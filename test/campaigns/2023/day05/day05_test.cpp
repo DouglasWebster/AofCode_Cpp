@@ -121,8 +121,15 @@ TEST_CASE(" 2023 day05 ", "[day05]")
     build_map(range_map, puzzle_test_data, 3);
 
     SourceRanges source_ranges{build_seed_ranges(puzzle_test_data[0])};
+    Catagories catagories{build_catagories(puzzle_test_data)};
 
-    RangeMap new_map{adjust_mapping(source_ranges, range_map)};
+    for(const auto &catagory : catagories) {
+      adjust_mapping(source_ranges, catagory);
+    }
+
+    CHECK(source_ranges.front().first == 82);
+
+  
   }
 
   // clean up after each test
