@@ -11,6 +11,7 @@ int first_item_fits(const Springs &springs, const DamagedGroups &groups)
   std::string matching_string(groups.front(), '#');
   matching_string.push_back('.');
 
+  // construct the minimum back
   std::string back_end{};
   for (size_t group_index{ 1 }; group_index < groups.size(); ++group_index) {
     back_end += std::string(groups[group_index], '#');
@@ -33,7 +34,7 @@ int first_item_fits(const Springs &springs, const DamagedGroups &groups)
     if (str_iter == match_string.end()) { break; } // can't find it so stop;
     const size_t next_position = static_cast<size_t> (str_iter - match_string.begin());
     const std::string remainder{match_string.substr(next_position + matching_string.size())};
-    if(remainder.size() <= back_end.size()) {break;}
+    if(remainder.size() < back_end.size()) {break;}
 
     auto back_iter = std::search(remainder.begin(),
       remainder.end(),
@@ -46,7 +47,8 @@ int first_item_fits(const Springs &springs, const DamagedGroups &groups)
       });
     if (back_iter == remainder.end()) { break; }
     fits++;
-    match_string.erase(0, next_position);
+    *str_iter = '.';  // the next time roung it can't start from here.
+    // match_string.erase(0, next_position + groups[0]);
   }
 
   return fits;
