@@ -18,7 +18,7 @@ TEST_CASE(" 2023 day16 testing", "[day16]")
 
   SECTION("check construction of the contraption")
   {
-    Contraption contraption{ build_contaption(puzzle_test_data) };
+    Contraption contraption{ build_contraption(puzzle_test_data) };
 
     Tile tile_1{contraption[12]}; // '-' tile
     // Tile tile_2{contraption[65]}; // '/' tile
@@ -33,12 +33,13 @@ TEST_CASE(" 2023 day16 testing", "[day16]")
 
    }
     SECTION("check the tracing of the light beam") {
-      Contraption contraption{build_contaption(puzzle_test_data)};
+      Contraption contraption{build_contraption(puzzle_test_data)};
 
       do_light_beam(contraption);
       draw_energised(contraption);
 
-      CHECK(count_energised(contraption) == 46);
+      CHECK(calc_max(contraption) == 46);
+      CHECK(find_max_tile_energisation(contraption, puzzle_test_data.size(), puzzle_test_data[0].size()) == 51);
       
     }
 }

@@ -56,6 +56,7 @@ struct Tile
   size_t *match_tile_to_direction(const Direction direction);
   bool more_exits() const;
   Exit get_last_exit();
+  void reset_links();
 };
 
 using Contraption = std::vector<Tile>;
@@ -66,7 +67,7 @@ using Contraption = std::vector<Tile>;
  * @param puzzle_dat
  * @return Contraption
  */
-Contraption build_contaption(const AoCLib::char_data &puzzle_data);
+Contraption build_contraption(const AoCLib::char_data &puzzle_data);
 
 using NextMirrors = std::stack<size_t>;
 
@@ -92,3 +93,6 @@ void do_light_beam(Contraption &contraption,
 
 
 void draw_energised(const Contraption &contraption);
+
+int find_max_tile_energisation(const Contraption &contraption, size_t rows, size_t cols);
+int calc_max(const Contraption &contraption);
