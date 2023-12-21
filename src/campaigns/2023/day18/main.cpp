@@ -20,23 +20,20 @@ int main()
 
   const DigPlan dig_plan{ create_plan(puzzle_data) };
 
-  // const Extents extents{ calc_dig_extents(dig_plan) };
-  // Excavation excavation{ dig_ditches(dig_plan, extents) };
-  // print_excavation(excavation, "trenches.txt");
-  // create_lagoon(excavation);
-  // print_excavation(excavation, "lagoon.txt");
-
-  // const auto total_size{count_lagoon_size(excavation)};
-
-  const DigiPlanInfo info{ create_vertices(dig_plan)};
+  const DigiPlanInfo info{ create_vertices(dig_plan) };
 
   auto total_area = shoelace_area(info.second) + info.first / 2 + 1;
-  std::cout << "total area = " << total_area << '\n';
+
+  const DigPlan hex_dig_plan{ decode_hex(puzzle_data) };
+  const DigiPlanInfo new_info{ create_vertices(hex_dig_plan) };
+
+  auto new_total_area = shoelace_area(new_info.second) + new_info.first / 2 + 1;
+
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
   std::cout << "Part 1 solution: Lagoon size is " << total_area << " cubic meters\n";
-  std::cout << "Part 2 solution: \n";
+  std::cout << "Part 2 solution: New lagoon size is " << std::fixed << new_total_area << " cubic meters\n";
 
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - time_start);

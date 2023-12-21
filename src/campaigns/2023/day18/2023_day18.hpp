@@ -25,16 +25,16 @@ struct Trench {
 using DigPlan = std::vector<Trench>;
 
 DigPlan create_plan(const AoCLib::line_data &puzzle_data);
+DigPlan decode_hex(const AoCLib::line_data &puzzle_data);
 
 using CoOrdinate = std::pair<double, double>;
 using Vertices = std::vector<CoOrdinate>;
-
-
 using DigiPlanInfo = std::pair<double, Vertices>;
 
 DigiPlanInfo create_vertices(const DigPlan &dig_plan);
 
 double shoelace_area(const Vertices &vertices);
+
 
 
 

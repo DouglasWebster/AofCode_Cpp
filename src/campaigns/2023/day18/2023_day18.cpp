@@ -40,18 +40,56 @@ DigPlan create_plan(const AoCLib::line_data &puzzle_data)
   return dig_plan;
 }
 
+DigPlan decode_hex(const AoCLib::line_data &puzzle_data)
+{
+
+// constexpr int hex_base{16};
+
+  if (puzzle_data.empty()) { return DigPlan{}; }
+  DigPlan dig_plan{};
+
+  for (const auto &line : puzzle_data) {
+    Trench trench{};
+    const auto data{ AoCLib::split_string_at_delimter(line, ' ').back() };
+    const std::string hex_string{"0x" + data.substr(2, 5)};
+    trench.length = std::stoul(hex_string, nullptr, 0);
+    
+    const char dir_value{data[7]};
+    switch (dir_value) {
+    case '0':
+      trench.direction = Direction::R;
+      break;
+    case '1':
+      trench.direction = Direction::D;
+      break;
+    case '2':
+      trench.direction = Direction::L;
+      break;
+    case '3':
+      trench.direction = Direction::U;
+      break;
+    default:
+      break;
+    }
+
+    dig_plan.emplace_back(trench);
+  }
+
+  return dig_plan;
+}
+
 DigiPlanInfo create_vertices(const DigPlan &dig_plan)
 {
   if (dig_plan.empty()) { return DigiPlanInfo{}; }
 
   CoOrdinate next_coord{ 0.0, 0.0 };
-  Vertices vertices{}; // next_coord };
+  Vertices vertices{};// next_coord };
   double total_length{};
 
   for (const auto &trench : dig_plan) {
     const Direction direction{ trench.direction };
 
-    auto length{static_cast<double>(trench.length)};
+    auto length{ static_cast<double>(trench.length) };
 
     total_length += length;
     switch (direction) {
@@ -70,7 +108,7 @@ DigiPlanInfo create_vertices(const DigPlan &dig_plan)
     }
     vertices.emplace_back(next_coord);
   }
-  return {total_length, vertices};
+  return { total_length, vertices };
 }
 
 double shoelace_area(const Vertices &vertices)

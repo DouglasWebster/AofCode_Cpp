@@ -28,4 +28,22 @@ TEST_CASE(" 2023 day18 testing", "[day18]")
 
     CHECK(area == 62.0);
   }
+
+  SECTION("check hex code converion and new size calculation") {
+    DigPlan hex_dig_plan{decode_hex(puzzle_test_data)};
+
+    CHECK(hex_dig_plan.front().direction == Direction::R);
+    CHECK(hex_dig_plan.front().length == 461937);
+
+    CHECK(hex_dig_plan.back().direction == Direction::U);
+    CHECK(hex_dig_plan.back().length == 500254);
+
+    DigiPlanInfo info{create_vertices(hex_dig_plan)};
+
+    auto area{shoelace_area(info.second)};
+    area += info.first / 2 + 1;
+
+    CHECK(area == 952408144115);
+  }
+
 }
