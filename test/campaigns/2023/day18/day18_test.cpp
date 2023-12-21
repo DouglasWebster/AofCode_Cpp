@@ -15,4 +15,53 @@ TEST_CASE(" 2023 day18 testing", "[day18]")
 
   const AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(data_file) };
 
+  DigPlan dig_plan{ create_plan(puzzle_test_data) };
+
+  SECTION("check calculation of extents")
+  {
+    Extents extents{ calc_dig_extents(dig_plan) };
+
+    CHECK(extents.first.first == 0);
+    CHECK(extents.first.second == 9);
+    CHECK(extents.second.first == 0);
+    CHECK(extents.second.second == 6);
+  }
+
+  SECTION("check digging ditches")
+  {
+    Extents extents{ calc_dig_extents(dig_plan) };
+    Excavation excavation{ dig_ditches(dig_plan, extents) };
+
+    draw_excavation(excavation);
+
+    CHECK(excavation[0][0] == '.');
+    CHECK(excavation[0][1] == '.');
+    CHECK(excavation[1][1] == '#');
+  }
+
+  SECTION("check creation of the lagoon")
+  {
+    Extents extents{ calc_dig_extents(dig_plan) };
+    Excavation excavation{ dig_ditches(dig_plan, extents) };
+    print_excavation(excavation, "trenches.txt");
+
+    create_lagoon(excavation);
+    print_excavation(excavation, "lagoon.txt");
+
+    draw_excavation(excavation);
+
+    CHECK(count_lagoon_size(excavation) == 62);
+  }
+
+  SECTION("check shoelace computation")
+  {
+    DigiPlanInfo info{ create_vertices(dig_plan) };
+
+    auto area{ shoelace_area(info.second) };
+    CHECK (info.first == 38);
+
+    area += info.first / 2 + 1;
+
+    CHECK(area == 62.0);
+  }
 }
