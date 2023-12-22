@@ -30,10 +30,17 @@ int main()
     if (check_location < min_location) { min_location = check_location; }
   }
 
+  RangeMap range_map{};
+  build_map(range_map, raw_data, 3);
+
+  SourceRanges source_ranges{ build_seed_ranges(raw_data[0]) };
+
+  for (const auto &catagory : catagories) { adjust_mapping(source_ranges, catagory); }
+
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
   std::cout << "Part 1 solution: Nearest seed location is " << min_location << '\n';
-  std::cout << "Part 2 solution:\n";
+  std::cout << "Part 2 solution: Lowest location is " << source_ranges.front().first << '\n';
 
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - time_start);

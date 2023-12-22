@@ -9,56 +9,16 @@
 #include <sstream>
 
 #include <2023_day05.hpp>
+#include <iostream>
 
 // start with a test case that does nothing but fail.
 
 TEST_CASE(" 2023 day05 ", "[day05]")
 {
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day04.txt";// NOLINT: This is not thread safe!
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test.txt";
 
-  std::string test_data = "seeds: 79 14 55 13\n";
-  test_data += "\n";
-  test_data += "seed-to-soil map:\n";
-  test_data += "50 98 2\n";
-  test_data += "52 50 48\n";
-  test_data += "\n";
-  test_data += "soil-to-fertilizer map:\n";
-  test_data += "0 15 37\n";
-  test_data += "37 52 2\n";
-  test_data += "39 0 15\n";
-  test_data += "\n";
-  test_data += "fertilizer-to-water map:\n";
-  test_data += "49 53 8\n";
-  test_data += "0 11 42\n";
-  test_data += "42 0 7\n";
-  test_data += "57 7 4\n";
-  test_data += "\n";
-  test_data += "water-to-light map:\n";
-  test_data += "88 18 7\n";
-  test_data += "18 25 70\n";
-  test_data += "\n";
-  test_data += "light-to-temperature map:\n";
-  test_data += "45 77 23\n";
-  test_data += "81 45 19\n";
-  test_data += "68 64 13\n";
-  test_data += "\n";
-  test_data += "temperature-to-humidity map:\n";
-  test_data += "0 69 1\n";
-  test_data += "1 0 69\n";
-  test_data += "\n";
-  test_data += "humidity-to-location map:\n";
-  test_data += "60 56 37\n";
-  test_data += "56 93 4";
-
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-
-  test_file << test_data << std::flush;
-
-  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(tmp_file.str()) };
+  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(data_file)};
 
   SECTION("check building seed vector")
   {
@@ -127,12 +87,9 @@ TEST_CASE(" 2023 day05 ", "[day05]")
       adjust_mapping(source_ranges, catagory);
     }
 
-    CHECK(source_ranges.front().first == 82);
+    CHECK(source_ranges.front().first == 46);
 
   
   }
 
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }

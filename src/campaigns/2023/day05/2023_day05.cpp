@@ -191,6 +191,7 @@ void adjust_mapping(SourceRanges &source_ranges, const RangeMap &next_level)
     GardenRange new_range{};
     new_range.first = (*map_it).second;
     ++map_it;
+    if(map_it == reduced_map.end()) {break;}
     new_range.second = (*map_it).second;
     ++map_it;
 
