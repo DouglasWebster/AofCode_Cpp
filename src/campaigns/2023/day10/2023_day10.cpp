@@ -1,4 +1,7 @@
 #include "2023_day10.hpp"
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <limits>
 
 MapData build_map_data(const AoCLib::char_data &puzzle_data, LocationTypes &locations)
@@ -102,8 +105,231 @@ size_t count_inner_tiles(const LocationTypes &locations)
   return 0;
 }
 
+Location find_start(const AoCLib::char_data &data)
+{
+  if (data.empty()) {
+    return { std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max() };
+  }
 
-size_t count_steps(const MapData &map_data)  //, LocationTypes &locations)
+  size_t col_pos{};
+  size_t row_pos{};
+  for (const auto &row : data) {
+    for (const auto col : row) {
+      if (col == 'S') { return Location{ row_pos, col_pos }; }
+      ++col_pos;
+    }
+    ++row_pos;
+    col_pos = 0;
+  }
+  return { std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max() };
+}
+
+// NOLINTBEGIN(readability-function-cognitive-complexity)
+Pipe start_direction(const AoCLib::char_data &data, const Location &start_location)
+{
+  if (data.empty()) { return {Connection::Ground, Connection::Ground}; }
+
+  Connection first_connection{Connection::Ground};
+  Connection second_connection{Connection::Ground};
+
+  auto [row, col] = start_location;
+  if (row > 0) {
+    const char next{ data[row - 1][col] };
+    if (next == 'F' || next == '7' || next == '|') { 
+      if(first_connection == Connection::Ground) {first_connection = Connection::North;}
+      else{second_connection = Connection::North;}
+     }
+  }
+  if (row < data.size() - 1) {
+    const char next{ data[row + 1][col] };
+    if (next == 'L' || next == 'J' || next == '|') {  
+      if(first_connection == Connection::Ground) {first_connection = Connection::South;}
+      else{second_connection = Connection::South;} }
+  }
+  if (col > 0) {
+    const char next{ data[row][col - 1] };
+    if (next == 'L' || next == 'F' || next == '-') {  
+      if(first_connection == Connection::Ground) {first_connection = Connection::West;}
+      else{second_connection = Connection::West;} }
+  }
+  if (col < data[0].size() - 1) {
+    const char next{ data[row][col + 1] };
+    if (next == '7' || next == 'J' || next == '-') {  
+      if(first_connection == Connection::Ground) {first_connection = Connection::East;}
+      else{second_connection = Connection::East;} }
+  }
+
+  return {first_connection, second_connection};
+}
+// NOLINTEND(readability-function-cognitive-complexity)
+
+void correct_start_symbol(const Location &start, const Pipe &pipe, AoCLib::char_data &data){
+    char replacement_char{};
+    
+    switch (pipe.first)
+    {
+    case Connection::North:
+      replacement_char = (pipe.second == Connection::East) ? 'L' : 'J';
+      break;
+    case Connection::South:
+      replacement_char = (pipe.second == Connection::East) ? 'F' : '7';
+      break;
+    case Connection::East:
+      replacement_char = (pipe.second == Connection::North) ? 'J' : '7';
+      break;
+    case Connection::West:
+      replacement_char = (pipe.second == Connection::North) ? 'L' : 'F';
+      break;
+    default:
+      break;
+    }
+
+    data[start.first][start.second] = replacement_char;
+}
+
+AoCLib::char_data
+  draw_map(const Location start, const Pipe &connections, const AoCLib::char_data &data)
+{
+
+  if (data.empty()) { return AoCLib::char_data{}; }
+  const auto max_size{ std::numeric_limits<size_t>::max() };
+  AoCLib::char_data path_map(data.size(), std::vector<char>(data[0].size(), '.'));
+  correct_start_symbol(start, connections, path_map);
+  Location next{ max_size, max_size };
+  bool first_iteration{ true };
+  Connection direction{connections.first};
+
+  while (next != start) {
+    if (first_iteration) {
+      next = start;
+      first_iteration = false;
+    }
+
+    switch (direction) {
+    case Connection::West:
+      --next.second;
+      ;
+      break;
+    case Connection::East:
+      ++next.second;
+      ;
+      break;
+    case Connection::South:
+      ++next.first;
+      ;
+      break;
+    case Connection::North:
+      --next.first;
+      ;
+      break;
+    default:
+      break;
+    }
+
+    auto next_char{ data[next.first][next.second] };
+    if(next_char == 'S') {next_char = path_map[next.first][next.second];}
+    path_map[next.first][next.second] = next_char;
+    switch (next_char) {
+    case 'J':
+      direction = (direction == Connection::East) ? Connection::North : Connection::West;
+      break;
+    case 'F':
+      direction = (direction == Connection::West) ? Connection::South : Connection::East;
+      break;
+    case 'L':
+      direction = (direction == Connection::West) ? Connection::North : Connection::East;
+      break;
+    case '7':
+      direction = (direction == Connection::East) ? Connection::South : Connection::West;
+      break;
+    default:
+      break;
+    }
+  }
+
+  print_map(data, "paths.txt");
+  print_map(path_map, "corrected_start.txt");
+  return path_map;
+}
+
+// NOLINTBEGIN(readability-function-cognitive-complexity)
+int count_enclosed(const AoCLib::char_data &data)
+{
+  AoCLib::char_data working_set = data;
+  if (data.empty()) { return 0; }
+  int total{};
+
+  auto flip_boolean{ [](bool &item) {
+    if (item) { item = false; } // NOLINT
+    else {item = true;}
+  } };
+
+  for (auto &row : working_set) {
+    row.push_back(' ');
+    bool inside = false; // NOLINT
+
+    for (size_t index{}; index < row.size() - 1; ++index) {
+      const auto first_char{ row[index] };
+      if (inside && first_char == '.') {
+        row[index] = 'I';
+        ++total;
+        continue;
+      }
+      if (first_char == '|') {
+        flip_boolean(inside);
+        continue;
+      }
+      auto next_char{ row[index + 1] };
+
+      while(next_char == '-') { // eat up the horizontal path segments
+        ++index;
+        next_char = row[index+1];
+      }
+
+      switch (first_char) {
+      case 'L':
+        if (next_char == '7') { flip_boolean(inside); }
+        ++index;
+        break;
+      case 'F':
+        if (next_char == 'J') { flip_boolean(inside); }
+        ++index;
+        break;
+      case 'J':
+        if (next_char == 'F') { flip_boolean(inside); }
+        ++index;
+        break;
+      case '7':
+        if (next_char == 'L') { flip_boolean(inside); }
+        ++index;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+  print_map(working_set, "enclosed_marked.txt");
+  return total;
+}
+// NOLINTEND(readability-function-cognitive-complexity)
+
+void print_map(const AoCLib::char_data &data, const std::string &file_name)
+{
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/" + file_name;
+
+  std::ofstream file_dump;
+  file_dump.open(data_file, std::ofstream::out | std::ofstream::trunc);
+  for (const auto &row : data) {
+    for (const auto col : row) { file_dump << col; }
+    file_dump << '\n';
+  }
+  file_dump << '\n';
+  file_dump.close();
+}
+
+
+size_t count_steps(const MapData &map_data)//, LocationTypes &locations)
 {
   if (map_data.second.empty()) { return size_t{}; }
 

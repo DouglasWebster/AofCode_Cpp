@@ -45,3 +45,6 @@ catch_discover_tests(
   "campaign 2023 day10 tests: "
   OUTPUT_SUFFIX
   .xml)
+
+  target_compile_definitions(2023_day10_test PRIVATE CURRENT_LIST_DIR="${CMAKE_CURRENT_LIST_DIR}")
+  

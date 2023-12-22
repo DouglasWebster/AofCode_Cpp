@@ -79,3 +79,11 @@ size_t count_steps(const MapData &map_data);
  */
 size_t count_inner_tiles(const LocationTypes &locations);
 
+Location find_start(const AoCLib::char_data & data);
+Pipe start_direction(const AoCLib::char_data & data, const Location &start_location);
+AoCLib::char_data draw_map(const Location start, const Pipe &connections, const AoCLib::char_data &data);
+int count_enclosed(const AoCLib::char_data &data);
+
+void print_map(const AoCLib::char_data &data, const std::string &file_name);
+
+

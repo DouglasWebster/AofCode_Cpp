@@ -24,10 +24,15 @@ int main()
 
   const size_t steps{ count_steps(map_data) / 2 };
 
+  auto direction{start_direction(puzzle_data, start_positon)};
+  const AoCLib::char_data path_map{draw_map(start_positon, direction, puzzle_data)};
+
+  const auto enclosed{count_enclosed(path_map)};
+
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
   std::cout << "Part 1 solution: Farthest point is " << steps << " allong the loop\n";
-  std::cout << "Part 2 solution: \n";
+  std::cout << "Part 2 solution: Enclosed tiles = " << enclosed << '\n';
 
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - time_start);
