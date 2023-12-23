@@ -40,7 +40,7 @@ Hands build_hands(const AoCLib::line_data &hands_data);
  *
  * @param hands
  */
-void order_hands_by_bid(Hands &hands);
+void order_hands_by_strength(Hands &hands);
 
 /**
  * @brief Rank the hands by standard poker rules.  The hands must be previously
@@ -49,3 +49,10 @@ void order_hands_by_bid(Hands &hands);
  * @param Hands
  */
 void rank_hands(Hands &hands);
+
+/**
+ * @brief use the Jacks as Jokers to strengthen the hands but reset their value to 1
+ * 
+ * @param hands 
+ */
+void strengthen_hands(Hands &hands);

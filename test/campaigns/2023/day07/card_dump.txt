@@ -1,5 +1,0 @@
-Strength 3, Cards:  12 12 12 11 14, Bid:  483, Rank:     5, Winnings:    2415
-Strength 3, Cards:  10  5  5 11  5, Bid:  684, Rank:     4, Winnings:    2736
-Strength 2, Cards:  13 13  6  7  7, Bid:   28, Rank:     3, Winnings:      84
-Strength 2, Cards:  13 10 11 11 10, Bid:  220, Rank:     2, Winnings:     440
-Strength 1, Cards:   3  2 10  3 13, Bid:  765, Rank:     1, Winnings:     765

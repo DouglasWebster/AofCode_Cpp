@@ -73,7 +73,7 @@ Hands build_hands(const AoCLib::line_data &hands_data)
   return hands;
 }
 
-void order_hands_by_bid(Hands &hands)
+void order_hands_by_strength(Hands &hands)
 {
   if (hands.empty()) { return; }
 
@@ -103,7 +103,7 @@ void order_hands_by_bid(Hands &hands)
     case 4:
       hand.strength = HandStrength::One;
       break;
-    case 5:  // NOLINT
+    case 5:// NOLINT
       hand.strength = HandStrength::High;
       break;
     default:
@@ -132,7 +132,7 @@ void rank_hands(Hands &hands)
   if (hands.empty()) { return; }
 
   std::stable_sort(hands.begin(), hands.end(), [](const Hand &hand1, const Hand &hand2) {
-    if(hand1.strength != hand2.strength) {return false; }
+    if (hand1.strength != hand2.strength) { return false; }
     for (size_t index{}; index < hand1.cards.size(); ++index) {
       const int hand1_val{ hand1.cards[index] };
       const int hand2_val{ hand2.cards[index] };
@@ -148,6 +148,69 @@ void rank_hands(Hands &hands)
     (*iter).rank = rank;
     (*iter).winnings = (*iter).bid * rank;
   }
-
-  dump_hands(hands);
 }
+
+// NOLINTBEGIN (readability-function-cognitive-complexity)
+void strengthen_hands(Hands &hands)
+{
+  constexpr int Jack{ 11 };
+  constexpr int Joker{ 1 };
+  constexpr int Five{ 5 };
+  constexpr int Four{ 4 };
+  constexpr int Three{ 3 };
+  constexpr int Two{ 2 };
+  constexpr int One{ 1 };
+  constexpr int Zero(0);
+
+  for (auto &hand : hands) {
+    for (auto &card : hand.cards) {
+      if (card == Jack) { card = Joker; }
+    }
+  }
+
+  for (auto &hand : hands) {
+    int jokers{};
+    std::map<int, int> card_count;
+    std::pair<std::map<int, int>::iterator, bool> ret;
+    for (auto card : hand.cards) {
+      if (card == Joker) {
+        ++jokers;  // don't add the jokers to the list of cards, just keep track of how many.
+        continue;
+      }
+      ret = card_count.insert(std::pair(card, 1));
+      if (!ret.second) { ret.first->second += 1; }
+    }
+
+    int max_no_card{};
+    for (const auto &item : card_count) {
+      if (item.second > max_no_card) { max_no_card = item.second; }
+    }
+
+    max_no_card += jokers;
+    switch (card_count.size()) {
+    case Zero:
+    [[]] case One:
+      hand.strength = HandStrength::Five;
+      break;
+    case Two:
+      hand.strength = (max_no_card == 4) ? HandStrength::Four : HandStrength::Full;
+      break;
+    case Three:
+      hand.strength = (max_no_card == 3) ? HandStrength::Three : HandStrength::Two;
+      break;
+    case Four:
+      hand.strength = HandStrength::One;
+      break;
+    case Five:
+      hand.strength = HandStrength::High;
+      break;
+    default:
+      break;
+    };
+
+    std::stable_sort(hands.begin(), hands.end(), [](const Hand &hand1, const Hand &hand2) {
+      return hand1.strength > hand2.strength;
+    });
+  }
+}
+// NOLINTEND (readability-function-cognitive-complexity)

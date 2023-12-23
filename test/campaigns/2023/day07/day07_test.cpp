@@ -20,6 +20,7 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
   test_data += "KK677 28\n";
   test_data += "KTJJT 220\n";
   test_data += "QQQJA 483\n";
+  test_data += "KJKKK 909";
 
 
   std::ofstream test_file{ tmp_file.str() };
@@ -36,14 +37,14 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
     Hands hands{ build_hands(puzzle_test_data) };
 
     CHECK(hands.size() == 5);
-    CHECK_THAT(hands[0].cards, Catch::Matchers::Equals(Cards{ 13, 10, 3, 3, 2 }));
+    CHECK_THAT(hands[0].cards, Catch::Matchers::Equals(Cards{ 3, 2, 10, 3, 13 }));
     CHECK(hands[0].bid == 765);
   }
 
   SECTION("check hand strenght sort")
   {
     Hands hands(build_hands(puzzle_test_data));
-    order_hands_by_bid(hands);
+    order_hands_by_strength(hands);
 
     CHECK(hands[0].strength == HandStrength::Three);
     CHECK(hands[1].strength == HandStrength::Three);
@@ -55,7 +56,7 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
   SECTION("check hand ranking")
   {
     Hands hands(build_hands(puzzle_test_data));
-    order_hands_by_bid(hands);
+    order_hands_by_strength(hands);
     rank_hands(hands);
 
     CHECK(hands.front().rank == static_cast<int>(hands.size()));
@@ -66,7 +67,7 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
   {
 
     Hands hands(build_hands(puzzle_test_data));
-    order_hands_by_bid(hands);
+    order_hands_by_strength(hands);
     rank_hands(hands);
 
     const int64_t total_winnings{ std::accumulate(
@@ -75,6 +76,21 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
       }) };
 
     CHECK(total_winnings == 6440);
+  }
+
+  SECTION("check total with jokers") {
+
+    Hands hands(build_hands(puzzle_test_data));
+    strengthen_hands(hands);
+    rank_hands(hands);
+
+    const int64_t total_winnings{ std::accumulate(
+      hands.begin(), hands.end(), 0, [](int sum, const Hand &hand) {
+        return sum + hand.winnings;
+      }) };
+
+    CHECK(total_winnings == 5905);
+    
   }
 
   // clean up after each test

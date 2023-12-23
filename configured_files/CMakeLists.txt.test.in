@@ -31,6 +31,8 @@ target_include_directories(
     @parent_directory@_@dir_name@_test 
     PRIVATE ${CMAKE_SOURCE_DIR}/src/campaigns/@parent_directory@/@dir_name@)
 
+target_compile_definitions(@parent_directory@-@dir_name@ PRIVATE CURRENT_LIST_DIR="${CMAKE_CURRENT_LIST_DIR}")
+
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
 # to whatever you want, or use different for different binaries
 catch_discover_tests(
