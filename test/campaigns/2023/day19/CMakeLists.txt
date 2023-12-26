@@ -1,19 +1,19 @@
 set(path ${CMAKE_CURRENT_LIST_DIR})
 cmake_path(GET path FILENAME this_directory)
 
-if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/@dir_name@_test.cpp")
+if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/day19_test.cpp")
     message("Creating standard test file for this days solution.")
     configure_file(
         "${CMAKE_SOURCE_DIR}/configured_files/day_test.cpp.in" 
-        "${CMAKE_CURRENT_LIST_DIR}/@dir_name@_test.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/day19_test.cpp"
         @ONLY)
 endif()
 
-add_executable(@parent_directory@_@dir_name@_test @dir_name@_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/campaigns/@parent_directory@/@dir_name@/@parent_directory@_@dir_name@.cpp)
+add_executable(2023_day19_test day19_test.cpp
+    ${CMAKE_SOURCE_DIR}/src/campaigns/2023/day19/2023_day19.cpp)
 
 target_link_libraries(
-  @parent_directory@_@dir_name@_test
+  2023_day19_test
   PRIVATE AofCode_Cpp::AofCode_Cpp_warnings
           AofCode_Cpp::AofCode_Cpp_options
           AofCode_Cpp::aoc_library
@@ -28,22 +28,22 @@ if(WIN32 AND BUILD_SHARED_LIBS)
 endif()
 
 target_include_directories(
-    @parent_directory@_@dir_name@_test 
-    PRIVATE ${CMAKE_SOURCE_DIR}/src/campaigns/@parent_directory@/@dir_name@)
+    2023_day19_test 
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/campaigns/2023/day19)
 
-target_compile_definitions(@parent_directory@_@dir_name@_test PRIVATE CURRENT_LIST_DIR="${CMAKE_CURRENT_LIST_DIR}")
+target_compile_definitions(2023_day19_test PRIVATE CURRENT_LIST_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
 # to whatever you want, or use different for different binaries
 catch_discover_tests(
-  @parent_directory@_@dir_name@_test 
+  2023_day19_test 
   TEST_PREFIX
-  "campaign @parent_directory@ @dir_name@ tests: "
+  "campaign 2023 day19 tests: "
   REPORTER
   XML
   OUTPUT_DIR
   .
   OUTPUT_PREFIX
-  "campaign @parent_directory@ @dir_name@ tests: "
+  "campaign 2023 day19 tests: "
   OUTPUT_SUFFIX
   .xml)
