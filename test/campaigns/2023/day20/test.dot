@@ -1,0 +1,15 @@
+digraph Test {
+
+nd_1 [label = "broadcaster"];
+nd_2 [label = "% a"];
+nd_3 [label = "& inv"];
+nd_4 [label = "% b"];
+nd_5 [label = "& con"];
+nd_6 [label = "output"];
+
+nd_1 -> nd_2;
+nd_2 -> nd_3, nd_5;
+nd_3 ->nd_4;
+nd_4 -> nd_5;
+nd_5 -> nd_6;
+}
