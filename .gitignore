@@ -33,3 +33,9 @@ $RECYCLE.BIN/
 ehthumbs.db
 Thumbs.db
 InstructionTable.ods
+
+#AofCode files.
+input*.txt
+test*.txt
+
+
