@@ -17,10 +17,20 @@ int main()
     std::cout << "No data to analyse!  Terminating program.";
     return 0;
   }
+  Garden garden{ create_garden(puzzle_data) };
+
+  size_t start_pos{};
+  for (; start_pos < garden.size(); ++start_pos) {
+    if (garden[start_pos].type == 'S') { break; }
+  }
+
+  Possibles possibles{ start_pos };
+  constexpr int moves{64};
+  for (int move{}; move < moves; ++move) { make_move(possibles, garden); }
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
-  std::cout << "Part 1 solution:\n";
+  std::cout << "Part 1 solution: Reachable plots = " << possibles.size() << '\n';
   std::cout << "Part 2 solution:\n";
 
   auto end_time = std::chrono::high_resolution_clock::now();
