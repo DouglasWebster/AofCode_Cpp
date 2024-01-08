@@ -1,6 +1,7 @@
 #include "2023_day02.hpp"
 
 #include <algorithm>
+#include <numeric>
 
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
@@ -90,8 +91,8 @@ int count_possible_games(const Games &games)
 int sum_set_powers(const Games &games)
 {
   if (games.empty()) { return 0; }
-
-  int power_sum{};
-  for (const auto &game : games) { power_sum += game.min_blue * game.min_green * game.min_red; }
-  return power_sum;
+  
+  return std::accumulate(games.begin(), games.end(), 0, [](int x, auto &game) {
+    return x + game. min_blue * game.min_green * game.min_red;
+  });
 }

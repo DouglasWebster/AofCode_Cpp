@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <numeric>
 
 #include "2023_day03.hpp"
 
@@ -22,10 +23,10 @@ int main()
   Schematic inflated_schematic{ inflate_schematic(engine_schematic) };
   const int part_no_sum{ calculate_partno_sum(inflated_schematic, possible_gears) };
 
-  int64_t gear_ration_product{};
-  for (const auto &gear : possible_gears) {
-    if (gear.second.first == 2) { gear_ration_product += gear.second.second; }
-  }
+  const int64_t gear_ration_product = std::accumulate(possible_gears.begin(), possible_gears.end(), 0, [](int64_t x, auto &gear) {
+    if (gear.second.first == 2) { return x + gear.second.second; }
+    return x;
+  });
 
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
