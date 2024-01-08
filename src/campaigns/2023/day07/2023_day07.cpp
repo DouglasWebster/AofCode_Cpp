@@ -85,10 +85,14 @@ void order_hands_by_strength(Hands &hands)
       if (!ret.second) { ret.first->second += 1; }
     }
 
-    int max_no_card{};
-    for (const auto &item : card_count) {
-      if (item.second > max_no_card) { max_no_card = item.second; }
-    }
+    // int max_no_card{};
+    // for (const auto &item : card_count) {
+    //   if (item.second > max_no_card) { max_no_card = item.second; }
+    // }
+
+    const int max_no_card = (*std::max_element(card_count.begin(), card_count.end(), [](const auto &item_1, const auto &item_2) {
+      return item_1.second < item_2.second;
+    })).second;
 
     switch (card_count.size()) {
     case 1:

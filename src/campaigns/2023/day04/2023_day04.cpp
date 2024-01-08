@@ -11,8 +11,8 @@ void convert_raw_data_to_maps(const AoCLib::line_data &card_data,
     std::vector<std::string> card_info{ AoCLib::split_string_at_delimter(card, ':') };
     std::vector<std::string> card_numbers{ AoCLib::split_string_at_delimter(card_info[1], '|') };
 
-    CardNumbers winning_numbers{ AoCLib::string_to_vector(card_numbers[0]) };
-    CardNumbers result_numbers{ AoCLib::string_to_vector(card_numbers[1]) };
+    const CardNumbers winning_numbers{ AoCLib::string_to_vector(card_numbers[0]) };
+    const CardNumbers result_numbers{ AoCLib::string_to_vector(card_numbers[1]) };
 
     winning_numbers_map.emplace(card_no, winning_numbers);
     card_numbers_map.emplace(card_no, result_numbers);
