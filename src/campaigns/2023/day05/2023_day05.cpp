@@ -47,8 +47,9 @@ size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_li
     map.insert(map.begin(), { unmapped, unmapped });
   }
 
-  for (auto iterator = map.begin(); iterator != map.end() - 1;
-       ++iterator) {// fill in any mapping gaps
+  // NOLINTBEGIN
+  // fill in any mapping gaps
+  for (auto iterator = map.begin(); iterator != map.end() - 1; ++iterator) {
     auto next_mapping_start = (*iterator).first.second + 1;
     auto next_mapping_end = (*(iterator + 1)).first.first;
 
@@ -57,6 +58,7 @@ size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_li
       map.insert(iterator + 1, { unmapped, unmapped });
     }
   }
+  // NOLINTEND
 
   unmapped = { map.back().first.second + 1, range_max };
   map.emplace_back(unmapped, unmapped);
@@ -191,13 +193,13 @@ void adjust_mapping(SourceRanges &source_ranges, const RangeMap &next_level)
     GardenRange new_range{};
     new_range.first = (*map_it).second;
     ++map_it;
-    if(map_it == reduced_map.end()) {break;}
+    if (map_it == reduced_map.end()) { break; }
     new_range.second = (*map_it).second;
     ++map_it;
 
     source_ranges.emplace_back(new_range);
   }
-  std::sort(source_ranges.begin(), source_ranges.end(), [](GardenRange first, GardenRange last){
+  std::sort(source_ranges.begin(), source_ranges.end(), [](GardenRange first, GardenRange last) {
     return first.first < last.first;
   });
 }
