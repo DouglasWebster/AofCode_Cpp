@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <numeric>
+#include <algorithm>
 
 #include "2023_day09.hpp"
 
@@ -21,10 +22,8 @@ int main()
   Tree forward_tree{};
   for (const auto &data : puzzle_data) {
     Sequence sequence{};
-    for (auto item : data) 
-    {
-      sequence.emplace_back(item);
-    }
+    sequence.resize(data.size());
+    std::copy(data.begin(), data.end(), sequence.begin());
     History history{ build_history(sequence) };
     extrapolate_next_value(history);
     forward_tree.emplace_back(history);

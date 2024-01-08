@@ -85,14 +85,11 @@ void order_hands_by_strength(Hands &hands)
       if (!ret.second) { ret.first->second += 1; }
     }
 
-    // int max_no_card{};
-    // for (const auto &item : card_count) {
-    //   if (item.second > max_no_card) { max_no_card = item.second; }
-    // }
-
-    const int max_no_card = (*std::max_element(card_count.begin(), card_count.end(), [](const auto &item_1, const auto &item_2) {
-      return item_1.second < item_2.second;
-    })).second;
+    const int max_no_card =
+      (*std::max_element(card_count.begin(),
+         card_count.end(),
+         [](const auto &item_1, const auto &item_2) { return item_1.second < item_2.second; }))
+        .second;
 
     switch (card_count.size()) {
     case 1:
@@ -157,7 +154,6 @@ void rank_hands(Hands &hands)
 // NOLINTBEGIN (readability-function-cognitive-complexity)
 void strengthen_hands(Hands &hands)
 {
-  constexpr int Jack{ 11 };
   constexpr int Joker{ 1 };
   constexpr int Five{ 5 };
   constexpr int Four{ 4 };
@@ -167,9 +163,15 @@ void strengthen_hands(Hands &hands)
   constexpr int Zero(0);
 
   for (auto &hand : hands) {
-    for (auto &card : hand.cards) {
-      if (card == Jack) { card = Joker; }
-    }
+
+    std::replace_if(
+      hand.cards.begin(),
+      hand.cards.end(),
+      [](auto x) {
+        constexpr int Jack{ 11 };
+        return x == Jack;
+      },
+      Joker);
   }
 
   for (auto &hand : hands) {
@@ -178,17 +180,18 @@ void strengthen_hands(Hands &hands)
     std::pair<std::map<int, int>::iterator, bool> ret;
     for (auto card : hand.cards) {
       if (card == Joker) {
-        ++jokers;  // don't add the jokers to the list of cards, just keep track of how many.
+        ++jokers;// don't add the jokers to the list of cards, just keep track of how many.
         continue;
       }
       ret = card_count.insert(std::pair(card, 1));
       if (!ret.second) { ret.first->second += 1; }
     }
 
-    int max_no_card{};
-    for (const auto &item : card_count) {
-      if (item.second > max_no_card) { max_no_card = item.second; }
-    }
+    int max_no_card =
+      (*std::max_element(card_count.begin(),
+         card_count.end(),
+         [](const auto &item_1, const auto &item_2) { return item_1.second < item_2.second; }))
+        .second;
 
     max_no_card += jokers;
     switch (card_count.size()) {
