@@ -23,7 +23,7 @@ int main()
   Schematic inflated_schematic{ inflate_schematic(engine_schematic) };
   const int part_no_sum{ calculate_partno_sum(inflated_schematic, possible_gears) };
 
-  const int64_t gear_ration_product = std::accumulate(possible_gears.begin(), possible_gears.end(), 0, [](int64_t x, auto &gear) {
+  const int64_t gear_ration_product = std::accumulate(possible_gears.begin(), possible_gears.end(), 0, [](int64_t x, const auto &gear) {
     if (gear.second.first == 2) { return x + gear.second.second; }
     return x;
   });

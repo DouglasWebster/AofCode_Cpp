@@ -91,8 +91,8 @@ int count_possible_games(const Games &games)
 int sum_set_powers(const Games &games)
 {
   if (games.empty()) { return 0; }
-  
-  return std::accumulate(games.begin(), games.end(), 0, [](int x, auto &game) {
+
+  return std::accumulate(games.begin(), games.end(), 0, [](int x, const auto &game) {
     return x + game. min_blue * game.min_green * game.min_red;
   });
 }
