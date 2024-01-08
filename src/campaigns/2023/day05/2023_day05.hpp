@@ -27,9 +27,9 @@ Seeds build_seeds_vector(const std::string &line);
 /**
  * @brief build a vector of ranges for a given map 
  * 
- * @param range_vector the range map to build
+ * @param map the range map to build
  * @param data the raw data 
- * @param start_line the line on the raw data where the ranges start
+ * @param current_line the line on the raw data where the ranges start
  * @return int the final line of the raw data proccessed 
  */
 size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_line);

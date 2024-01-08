@@ -33,7 +33,7 @@ using Winnings = std::pair<int, int>;
  * @brief given a list of scratchcard data create two maps, each indexed by card number. 
  * One contining the list of winning numbers, the other containin a list of numbers to check
  *
- * @param raw_data a list of scratchcard data
+ * @param card_data a list of scratchcard data
  * @param winning_numbers_map contians the numbers to check against
  * @param card_numbers_map contains the numbers to check
  */

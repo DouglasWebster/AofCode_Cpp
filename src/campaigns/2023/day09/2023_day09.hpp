@@ -26,7 +26,7 @@ History build_history(const Sequence &sequence);
  * next value is given by the sum of the last value in this sequence + the
  * last value in the next sequence.
  * 
- * @param History 
+ * @param history 
  */
 void extrapolate_next_value(History & history);
 

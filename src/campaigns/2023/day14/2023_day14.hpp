@@ -35,6 +35,7 @@ Platform tilt_platform(const Platform &platform, const Cardinal direction = Card
  * @brief deterine the load on the support, north support by default
  * 
  * @param platform the state of the platform
+ * @param support the location of the support; defaults to North if not specified.
  * @return int the load calculated for the support
  */
 int64_t calculate_load(const Platform & platform, const Cardinal support = Cardinal::North);

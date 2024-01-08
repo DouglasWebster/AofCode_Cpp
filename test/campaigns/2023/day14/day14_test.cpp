@@ -12,7 +12,7 @@
 TEST_CASE(" 2023 day14 testing", "[day14]")
 {
   std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day14.txt";// NOLINT: This is not thread safe!
+  tmp_file << std::tmpnam(nullptr) << "_2023_day14.txt"; // NOLINT: This is not thread safe!
 
   std::string test_data = "O....#....\n";
   test_data += "O.OO#....#\n";

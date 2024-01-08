@@ -57,7 +57,7 @@ MapData build_map_data(const AoCLib::char_data & puzzle_data, LocationTypes &loc
 /**
  * @brief Set the type of ground at each location
  * 
- * @param map_data a map with the path already allocated/
+ * @param puzzle_data a map with the path already allocated/
  * @return LocationTypes 
  */
 LocationTypes set_locations(const AoCLib::char_data & puzzle_data);

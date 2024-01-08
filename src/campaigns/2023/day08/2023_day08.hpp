@@ -27,8 +27,8 @@ Instructions create_instruction(const AoCLib::line_data &puzzle_data);
 /**
  * @brief Create the move_network object
  * 
+ * @param move_network the list of nodes for movement
  * @param puzzle_data the raw data for the problem 
- * @return Network
  * 
  * @note we create both items at the same time as they are located in the same file.
  */
@@ -60,7 +60,7 @@ using StartPositions = std::vector<size_t>;
 /**
  * @brief Get the start postions object 
  * 
- * @param puzzle_daa 
+ * @param puzzle_data 
  * @return StartPositions 
  */
 StartPositions get_start_postions(const AoCLib::line_data & puzzle_data);

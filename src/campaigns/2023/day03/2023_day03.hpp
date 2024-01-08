@@ -41,7 +41,7 @@ Schematic inflate_schematic(const Schematic &engine);
 /**
  * @brief calculates the sum of the part no's
  *
- * @param inflated_schematic a copy of the engine schematic inflated by 1 on each side
+ * @param bounded_schematic a copy of the engine schematic inflated by 1 on each side
  * @param gear_map the map that records if a discovered part number could be a gear.
  * @return int
  *

@@ -43,7 +43,7 @@ Games build_games(const AoCLib::line_data &raw_data);
 /**
  * @brief count the possible games
  * 
- * @param Games a vector of games
+ * @param games a vector of games
  * @return int accumulation of of the game no for impossible games
  */
 int count_possible_games(const Games & games);

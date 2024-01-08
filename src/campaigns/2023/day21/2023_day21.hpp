@@ -35,7 +35,7 @@ using Possibles = std::unordered_set<size_t>;
  * direction storing the location storing the new moves in
  * a unordered map
  * 
- * @param possible an unordered map of current locations.  This is
+ * @param possibles an unordered map of current locations.  This is
  * updated to reflect the new possible locations. 
  * @param garden the map on which the step is to be taken.
  */

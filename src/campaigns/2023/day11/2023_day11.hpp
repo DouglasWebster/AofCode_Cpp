@@ -29,7 +29,7 @@ void expand_universe(Universe & universe);
 /**
  * @brief Get the galaxies object
  * 
- * @param Universe 
+ * @param universe 
  * @return Galaxy 
  */
 Galaxies get_galaxies(const Universe &universe);
@@ -37,7 +37,7 @@ Galaxies get_galaxies(const Universe &universe);
 /**
  * @brief create a vector of unique pairs of galaxies
  * 
- * @param Galaxies 
+ * @param galaxies 
  * @return GalaxyPairs 
  */
 GalaxyPairs pair_galaxies(const Galaxies &galaxies);
@@ -46,7 +46,7 @@ GalaxyPairs pair_galaxies(const Galaxies &galaxies);
  * @brief get the total distances between galaxies using Manhattan distances
  * 
  * @param pairs 
- * @param Galaxies 
+ * @param galaxies 
  * @return int 
  */
 int calculate_galaxy_manhattan_seperation(const GalaxyPairs &pairs, const Galaxies &galaxies);

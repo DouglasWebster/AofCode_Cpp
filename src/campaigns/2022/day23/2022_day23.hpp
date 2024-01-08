@@ -73,7 +73,7 @@ unsigned int which_directions(const GroveMap & map, const Vector2dPosition & loc
 /**
  * @brief moves the elves to their new positions
  * 
- * @param GroveMap the location of the elves and available positions
+ * @param grove_map the location of the elves and available positions
  * @param movement_map the desired movement direction for each elve that can move.
  * 
  * For each desired movement in the movement map it moves the corresponding elve if the desired position is free.

@@ -28,7 +28,7 @@ using Hands = std::vector<Hand>;
 /**
  * @brief given a set of hand strings create an unorderd Hand vector
  *
- * @param hand_data a series of strings containing the hand information
+ * @param hands_data a series of strings containing the hand information
  * @return Hands
  *
  * @note The cards in the hand are sorted in descending value.
@@ -46,7 +46,7 @@ void order_hands_by_strength(Hands &hands);
  * @brief Rank the hands by standard poker rules.  The hands must be previously
  * sorted into bid order.
  *
- * @param Hands
+ * @param hands
  */
 void rank_hands(Hands &hands);
 

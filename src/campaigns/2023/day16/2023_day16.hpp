@@ -64,7 +64,7 @@ using Contraption = std::vector<Tile>;
 /**
  * @brief given a list of tiles construct the contraption
  *
- * @param puzzle_dat
+ * @param puzzle_data
  * @return Contraption
  */
 Contraption build_contraption(const AoCLib::char_data &puzzle_data);
@@ -84,8 +84,9 @@ Exit transit_tile(Tile &tile, Direction direction);
 /**
  * @brief traverse the path of the light beam taking accoung of all splits;
  *
+ * @param contraption the item the light beam is traversing.
  * @param tile_id the starting tile for the light beam defaults top left;
- * @param Direction the direction the beam is heading, defaults left to right
+ * @param direction the direction the beam is heading, defaults left to right
  */
 void do_light_beam(Contraption &contraption,
   size_t tile_id = 0,
