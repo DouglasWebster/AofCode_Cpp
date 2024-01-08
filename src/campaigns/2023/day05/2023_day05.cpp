@@ -47,7 +47,7 @@ size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_li
     map.insert(map.begin(), { unmapped, unmapped });
   }
 
-  // NOLINTBEGIN
+  // cppcheck-surpress-begin invalidContainer
   // fill in any mapping gaps
   for (auto iterator = map.begin(); iterator != map.end() - 1; ++iterator) {
     auto next_mapping_start = (*iterator).first.second + 1;
@@ -58,7 +58,7 @@ size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_li
       map.insert(iterator + 1, { unmapped, unmapped });
     }
   }
-  // NOLINTEND
+  // cppcheck-surpress-end invalidContainer
 
   unmapped = { map.back().first.second + 1, range_max };
   map.emplace_back(unmapped, unmapped);
