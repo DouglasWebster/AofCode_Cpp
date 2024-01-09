@@ -27,12 +27,12 @@ Seeds build_seeds_vector(const std::string &line);
 /**
  * @brief build a vector of ranges for a given map 
  * 
- * @param map the range map to build
+ * @param range_map the range map to build
  * @param data the raw data 
  * @param current_line the line on the raw data where the ranges start
  * @return int the final line of the raw data proccessed 
  */
-size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_line);
+size_t build_map(RangeMap &range_map, const AoCLib::line_data &data, size_t current_line);
 
 using Catagories = std::vector<RangeMap>;
 
@@ -56,7 +56,7 @@ size_t trace_seed(size_t seed, const Catagories &catagories);
 using SourceRanges = std::vector<GardenRange>;
 
 /**
- * @brief build a range map from the seed information of consecutive pairs <start_no, length> 
+ * @brief build a range range_map from the seed information of consecutive pairs <start_no, length> 
  * 
  * @param line the seed information
  * @return SourceRanges 

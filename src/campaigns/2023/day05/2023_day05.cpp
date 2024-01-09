@@ -15,10 +15,10 @@ Seeds build_seeds_vector(const std::string &line)
   return seeds;
 }
 
-size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_line)
+size_t build_map(RangeMap &range_map, const AoCLib::line_data &data, size_t current_line)
 {
   if (current_line >= data.size()) { return 0; }
-  if (!map.empty()) { return 0; };
+  if (!range_map.empty()) { return 0; };
   if (current_line == 0) { return 0; }
 
   constexpr size_t range_min{ std::numeric_limits<size_t>::min() };
@@ -32,36 +32,36 @@ size_t build_map(RangeMap &map, const AoCLib::line_data &data, size_t current_li
     const GardenRange destination{ range_data[0], range_data[0] + range_data[2] - 1 };
     const GardenRange source{ range_data[1], range_data[1] + range_data[2] - 1 };
 
-    map.emplace_back(source, destination);
+    range_map.emplace_back(source, destination);
     ++current_line;
     if (current_line == data.size()) { break; }
   }
 
-  std::sort(map.begin(), map.end(), [](Mapping lead, Mapping next) {
+  std::sort(range_map.begin(), range_map.end(), [](Mapping lead, Mapping next) {
     return (lead.first.first < next.first.first);
   });
 
   GardenRange unmapped{ range_min, range_min };
-  if (map[0].first.first != range_min) {// we haven't started from zero so insert the first Mapping
-    unmapped.second = map.front().first.first - 1;
-    map.insert(map.begin(), { unmapped, unmapped });
+  if (range_map[0].first.first != range_min) {// we haven't started from zero so insert the first Mapping
+    unmapped.second = range_map.front().first.first - 1;
+    range_map.insert(range_map.begin(), { unmapped, unmapped });
   }
 
   // cppcheck-suppress-begin invalidContainer
   // fill in any mapping gaps
-  for (auto iterator = map.begin(); iterator != map.end() - 1; ++iterator) {
+  for (auto iterator = range_map.begin(); iterator != range_map.end() - 1; ++iterator) {
     auto next_mapping_start = (*iterator).first.second + 1;
     auto next_mapping_end = (*(iterator + 1)).first.first;
 
     if (next_mapping_start != next_mapping_end) {
       unmapped = GardenRange{ next_mapping_start, next_mapping_end - 1 };
-      map.insert(iterator + 1, { unmapped, unmapped });
+      range_map.insert(iterator + 1, { unmapped, unmapped });
     }
   }
   // cppcheck-suppress-end invalidContainer
 
-  unmapped = { map.back().first.second + 1, range_max };
-  map.emplace_back(unmapped, unmapped);
+  unmapped = { range_map.back().first.second + 1, range_max };
+  range_map.emplace_back(unmapped, unmapped);
 
   return current_line;
 }
