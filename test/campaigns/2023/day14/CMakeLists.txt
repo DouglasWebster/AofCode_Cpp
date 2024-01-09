@@ -31,6 +31,8 @@ target_include_directories(
     2023_day14_test 
     PRIVATE ${CMAKE_SOURCE_DIR}/src/campaigns/2023/day14)
 
+target_compile_definitions(2023_day14_test PRIVATE CURRENT_LIST_DIR="${CMAKE_CURRENT_LIST_DIR}")
+
 # automatically discover tests that are defined in catch based test files you can modify the unittests. Set TEST_PREFIX
 # to whatever you want, or use different for different binaries
 catch_discover_tests(

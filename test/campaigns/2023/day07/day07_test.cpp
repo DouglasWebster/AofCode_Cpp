@@ -12,25 +12,10 @@
 
 TEST_CASE(" 2023 day07 testing", "[day07]")
 {
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day04.txt";// NOLINT: This is not thread safe!
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test.txt";
 
-  std::string test_data = "32T3K 765\n";
-  test_data += "T55J5 684\n";
-  test_data += "KK677 28\n";
-  test_data += "KTJJT 220\n";
-  test_data += "QQQJA 483\n";
-  test_data += "KJKKK 909";
-
-
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-
-  test_file << test_data << std::flush;
-
-  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(tmp_file.str()) };
+  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(data_file)};
 
   SECTION("check the creation of the hands")
   {
@@ -92,8 +77,4 @@ TEST_CASE(" 2023 day07 testing", "[day07]")
     CHECK(total_winnings == 5905);
     
   }
-
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }

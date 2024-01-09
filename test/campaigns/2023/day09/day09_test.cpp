@@ -18,22 +18,11 @@ Sequence convert_data_to_sequence(std::vector<int> &data)
 
 TEST_CASE(" 2023 day09 testing", "[day09]")
 {
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day09.txt";// NOLINT: This is not thread safe!
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test.txt";
 
-  std::string test_data = "0 3 6 9 12 15\n";
-  test_data += "1 3 6 10 15 21\n";
-  test_data += "10 13 16 21 30 45\n";
-  test_data += "9, 6, 3, 0, -3, -6, -9, -12";
+  AoCLib::int_data puzzle_test_data{ AoCLib::vectorise_int_data(data_file) };
 
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-
-  test_file << test_data << std::flush;
-
-  AoCLib::int_data puzzle_test_data{ AoCLib::vectorise_int_data(tmp_file.str()) };
 
   SECTION("check building the history")
   {
@@ -87,8 +76,4 @@ TEST_CASE(" 2023 day09 testing", "[day09]")
 
     CHECK(calculate_extrapolated_sum(tree) == 99);
   }
-
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }

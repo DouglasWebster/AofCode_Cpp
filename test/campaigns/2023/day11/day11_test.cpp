@@ -11,29 +11,11 @@
 
 TEST_CASE(" 2023 day11 testing", "[day11]")
 {
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day11.txt";// NOLINT: This is not thread safe!
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test.txt";
 
-  std::string test_data = "...#......\n";
-  test_data += ".......#..\n";
-  test_data += "#.........\n";
-  test_data += "..........\n";
-  test_data += "......#...\n";
-  test_data += ".#........\n";
-  test_data += ".........#\n";
-  test_data += "..........\n";
-  test_data += ".......#..\n";
-  test_data += "#...#.....";
+  AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(data_file) };
 
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-
-
-  test_file << test_data << std::flush;
-
-  AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(tmp_file.str()) };
 
   SECTION("check universe expansion")
   {
@@ -95,9 +77,4 @@ TEST_CASE(" 2023 day11 testing", "[day11]")
 
 
   }
-
-
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }

@@ -9,28 +9,12 @@
 
 #include <2023_day08.hpp>
 
-TEST_CASE(" 2023 day07 testing", "[day09]")
+TEST_CASE(" 2023 day08 testing", "[day08]")
 {
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day08.txt";// NOLINT: This is not thread safe!
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test1.txt";
 
-  std::string test_data = "RL\n\n";
-  test_data += "AAA = (BBB, CCC)\n";
-  test_data += "BBB = (DDD, EEE)\n";
-  test_data += "CCC = (ZZZ, GGG)\n";
-  test_data += "DDD = (DDD, DDD)\n";
-  test_data += "EEE = (EEE, EEE)\n";
-  test_data += "GGG = (GGG, GGG)\n";
-  test_data += "ZZZ = (ZZZ, ZZZ)";
-
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-
-  test_file << test_data << std::flush;
-
-  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(tmp_file.str()) };
+  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(data_file) };
 
   SECTION("check building of the network and instuctions")
   {
@@ -103,35 +87,14 @@ TEST_CASE(" 2023 day07 testing", "[day09]")
     CHECK(navigate_map(check_instruction, move_network) == 6);
   }
 
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }
 
 TEST_CASE(" checking part 2", )
 {
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test2.txt";
 
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day08.txt";// NOLINT: This is not thread safe!
-
-  std::string test_data = "LR\n\n";
-  test_data += "11A = (11B, XXX)\n";
-  test_data += "11B = (XXX, 11Z)\n";
-  test_data += "11Z = (11B, XXX)\n";
-  test_data += "22A = (22B, XXX)\n";
-  test_data += "22B = (22C, 22C)\n";
-  test_data += "22C = (22Z, 22Z)\n";
-  test_data += "22Z = (22B, 22B)\n";
-  test_data += "XXX = (XXX, XXX)";
-
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-
-  test_file << test_data << std::flush;
-
-  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(tmp_file.str()) };
+  AoCLib::line_data puzzle_test_data{ AoCLib::vectorise_line_data(data_file) };
 
   SECTION("check generation of starting positions")
   {
@@ -140,14 +103,5 @@ TEST_CASE(" checking part 2", )
     CHECK_THAT(starts, Catch::Matchers::Equals(StartPositions{ 0, 3 }));
   }
 
-  SECTION("check follow_nodes ") {
-
-    CHECK(follow_nodes(puzzle_test_data) == 6);
-
-  }
-
-
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
+  SECTION("check follow_nodes ") { CHECK(follow_nodes(puzzle_test_data) == 6); }
 }

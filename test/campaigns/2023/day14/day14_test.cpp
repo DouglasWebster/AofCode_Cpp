@@ -11,27 +11,10 @@
 
 TEST_CASE(" 2023 day14 testing", "[day14]")
 {
-  std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day14.txt"; // NOLINT: This is not thread safe!
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test.txt";
 
-  std::string test_data = "O....#....\n";
-  test_data += "O.OO#....#\n";
-  test_data += ".....##...\n";
-  test_data += "OO.#O....O\n";
-  test_data += ".O.....O#.\n";
-  test_data += "O.#..O.#.#\n";
-  test_data += "..O..#O..O\n";
-  test_data += ".......O..\n";
-  test_data += "#....###..\n";
-  test_data += "#OO..#....";
-
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-  test_file << test_data << std::flush;
-
-  AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(tmp_file.str()) };
+  AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(data_file) };
 
   SECTION("check creation of platform")
   {
@@ -83,9 +66,4 @@ TEST_CASE(" 2023 day14 testing", "[day14]")
     CHECK(calculate_load(tilted_platform) == 136);
 
   }
-
-
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
 }

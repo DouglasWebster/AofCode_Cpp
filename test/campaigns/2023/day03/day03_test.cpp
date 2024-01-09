@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cstdio>
 
 #include <2023_day03.hpp>
 
@@ -13,29 +14,13 @@
 
 TEST_CASE(" 2023 day03 testing", "[day03]")
 {
-    std::stringstream tmp_file;
-  tmp_file << std::tmpnam(nullptr) << "_2023_day03.txt";// NOLINT: This is not thread safe!
+ 
+  std::string data_file = CURRENT_LIST_DIR;
+  data_file += "/test1.txt";
 
-  std::string test_data = "467..114..\n";
-  test_data += "...*......\n";
-  test_data += "..35..633.\n";
-  test_data += "......#...\n";
-  test_data += "617*......\n";
-  test_data += ".....+.58.\n";
-  test_data += "..592.....\n";
-  test_data += "......755.\n";
-  test_data += "...$.*....\n";
-  test_data += ".664.598..";
+  const AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(data_file) };
 
 
-
-  std::ofstream test_file{ tmp_file.str() };
-  if (!test_file) {
-    std::cerr << "Test file " << tmp_file.str() << "could not be opened for writing\n";
-  }
-  test_file << test_data << std::flush;
-
-  AoCLib::char_data puzzle_test_data{ AoCLib::vectorise_char_data(tmp_file.str()) };
 
   SECTION( "check creation of raw data") {
     std::vector<char> row_1_vector{'4','6','7','.','.','1','1','4','.','.'};
@@ -79,9 +64,4 @@ TEST_CASE(" 2023 day03 testing", "[day03]")
 
     CHECK(gear_ration_product == 467835);
   }
-
-  // clean up after each test
-  std::filesystem::path temp_file_path = tmp_file.str();
-  if (std::filesystem::exists(temp_file_path)) { std::filesystem::remove(temp_file_path); }
-
 }
