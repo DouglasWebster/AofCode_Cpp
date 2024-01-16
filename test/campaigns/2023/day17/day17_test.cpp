@@ -36,4 +36,15 @@ TEST_CASE(" 2023 day17 testing", "[day17]")
     CHECK(city.adj_list[1].size() == 3);
     CHECK(city.adj_list[14].size() == 4);
   }
+
+  SECTION("check shortest path") {
+    Edges edges{create_edges(puzzle_test_data)};
+    const size_t nodes{puzzle_test_data.size() * puzzle_test_data[0].size()};
+
+    City city(edges, nodes);  
+
+    ShortestPaths shortest_paths{energy_used(city)};
+
+    CHECK(shortest_paths.first == 0);  
+  }
 }

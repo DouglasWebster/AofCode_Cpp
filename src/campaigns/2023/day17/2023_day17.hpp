@@ -16,19 +16,20 @@ enum Heading {
   South,
   East,
   West,
+  Nowhere
 };
 
 struct Edge
 {
   size_t source, dest;
-  int heat_loss;
+  size_t heat_loss;
   Heading heading;
 };
 
 struct Adjacency
 {
   size_t dest;
-  int heat_loss;
+  size_t heat_loss;
   Heading heading;
 };
 
