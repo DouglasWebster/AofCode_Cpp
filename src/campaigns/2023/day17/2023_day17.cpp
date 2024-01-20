@@ -67,9 +67,10 @@ constexpr size_t max_heat_loss{ std::numeric_limits<size_t>::max() };
 
 struct CityBlock
 {
-  size_t total_heat_loss;
-  size_t previous_block;
-  Heading entered_from;
+  size_t total_heat_loss{max_heat_loss};
+  size_t previous_block{max_block};
+  Heading going{Nowhere};
+  int previous_direction_count{0};
 };
 
 using CityBlockNode = std::pair<size_t, CityBlock>;
@@ -78,7 +79,7 @@ struct CB_Comparitor
 {
   bool operator() (const CityBlockNode &lhs, const CityBlockNode &rhs)
   {
-    return (lhs.second.total_heat_loss < rhs.second.total_heat_loss);
+    return (lhs.second.total_heat_loss > rhs.second.total_heat_loss);
   }
 };
 
@@ -89,7 +90,7 @@ ShortestPaths energy_used(const City &city)
 
   std::priority_queue<CityBlockNode, std::vector<CityBlockNode>, CB_Comparitor> city_block_pq;
 
-  std::vector<CityBlock> city_blocks(city.adj_list.size(), {max_heat_loss, max_block, Nowhere});
+  std::vector<CityBlock> city_blocks(city.adj_list.size());
   city_blocks[0].total_heat_loss = 0;
   
   city_block_pq.emplace(0, city_blocks[0]);
@@ -100,12 +101,21 @@ ShortestPaths energy_used(const City &city)
     city_block_pq.pop();
     size_t heat_loss_so_far = city_block.second.total_heat_loss;
     for(auto adjacency : city.adj_list[city_block.first]) {
+      if(adjacency.dest == city_block.second.previous_block) {continue;}
+      Heading going{adjacency.heading};
+      Heading from{city_block.second.going};
+      int heading_count = (going != from) ? 1 : city_block.second.previous_direction_count +1;
+      if(heading_count > 3) {continue;}
+
       size_t next_block{adjacency.dest};
+
       size_t heat_loss_to_next_block = heat_loss_so_far + adjacency.heat_loss;
       size_t next_block_heat_losses{city_blocks[next_block].total_heat_loss};
       if((next_block_heat_losses == max_heat_loss) || (next_block_heat_losses > heat_loss_to_next_block)) {
         city_blocks[next_block].total_heat_loss = heat_loss_to_next_block;
         city_blocks[next_block].previous_block = city_block.first;
+        city_blocks[next_block].going = going;
+        city_blocks[next_block].previous_direction_count = heading_count;
         city_block_pq.emplace(next_block, city_blocks[next_block]);
       }
 
