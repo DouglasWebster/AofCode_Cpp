@@ -1,6 +1,5 @@
 #include "2023_day17.hpp"
 #include <cstdlib>
-#include <format>
 #include <functional>
 #include <limits>
 #include <queue>
@@ -14,9 +13,6 @@ Edges create_edges(const AoCLib::char_data &data)
 
   Edges edges{};
   edges.reserve(rows * cols * 4);// assume one orthogonal edge from each vetices
-
-  // size_t row{};
-  // size_t col{};
 
   for (size_t row{}; row < rows; ++row) {
     for (size_t col{}; col < cols; ++col) {
@@ -69,7 +65,6 @@ constexpr size_t max_heat_loss{ std::numeric_limits<size_t>::max() };
 struct CityBlock
 {
   size_t total_heat_loss{ max_heat_loss };
-  size_t previous_block{ max_block };
   Heading going{ Nowhere };
   int steps{ 1 };
 };
@@ -83,38 +78,6 @@ struct CB_Comparitor
     return (lhs.second.total_heat_loss > rhs.second.total_heat_loss);
   }
 };
-
-void print_visited(const std::vector<CityBlock> &city_blocks)
-{
-
-  for (const auto &city_block : city_blocks) {
-    if (city_block.total_heat_loss == max_heat_loss) { continue; }
-    std::string going{};
-    switch (city_block.going) {
-    case North:
-      going = "North";
-      break;
-    case South:
-      going = "South";
-      break;
-    case East:
-      going = "East";
-      break;
-    case West:
-      going = "West";
-      break;
-    default:
-      going = "Nowhere";
-      break;
-    };
-
-    std::cout << std::format("Previous block: {}, Heat_loss: {}, Heading: {}, Steps: {}\n",
-      city_block.previous_block,
-      city_block.total_heat_loss,
-      going,
-      city_block.steps);
-  }
-}
 
 ShortestPaths energy_used(const City &city, const int min_steps, const int max_steps)
 {
@@ -168,7 +131,7 @@ ShortestPaths energy_used(const City &city, const int min_steps, const int max_s
       const size_t next_block_heat_loss{ city_blocks[next_block_id].total_heat_loss };
       const size_t heat_loss = block_data.total_heat_loss + adjacency.heat_loss;
       if (next_block_heat_loss == max_heat_loss || heat_loss < next_block_heat_loss) {
-        CityBlock next_block{ heat_loss, block_id, next_heading, steps };
+        CityBlock next_block{ heat_loss, next_heading, steps };
         city_blocks[next_block_id] = next_block;
         city_block_pq.emplace(next_block_id, next_block);
       }
