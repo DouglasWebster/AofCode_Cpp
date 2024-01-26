@@ -12,7 +12,7 @@ inline constexpr std::string_view campaign_day = "day17";
 }// namespace AofCode_Cpp::cmake
 
 enum Heading {
-  North,
+  North = 0,
   South,
   East,
   West,
@@ -80,4 +80,4 @@ using ShortestPaths = std::pair<size_t, size_t>;
  * steps.
  * 
  */
-ShortestPaths energy_used(const City &city);
+ShortestPaths energy_used(const City &city, const int min_steps = 1, const int max_steps = 3);

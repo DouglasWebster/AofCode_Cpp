@@ -43,8 +43,22 @@ TEST_CASE(" 2023 day17 testing", "[day17]")
 
     City city(edges, nodes);  
 
-    ShortestPaths shortest_paths{energy_used(city)};
+    auto [block, energy] =  energy_used(city);
 
-    CHECK(shortest_paths.first == 0);  
+    CHECK(block == 168);
+    CHECK(energy == 102);
+  }
+
+  SECTION("check shortest path with ultra crucible") {
+    Edges edges{create_edges(puzzle_test_data)};
+    const size_t nodes{puzzle_test_data.size() * puzzle_test_data[0].size()};
+
+    City city(edges, nodes);  
+
+    auto [block, energy] =  energy_used(city, 4, 10);
+
+    CHECK(block == 168);
+    CHECK(energy == 94);
+
   }
 }

@@ -1,5 +1,6 @@
 #include "2023_day17.hpp"
 #include <cstdlib>
+#include <format>
 #include <functional>
 #include <limits>
 #include <queue>
@@ -54,8 +55,8 @@ Edges create_edges(const AoCLib::char_data &data)
         edge.dest = destination;
         edge.heading = heading;
         ldiv_t dest_link{ ldiv(static_cast<long>(destination), static_cast<long>(rows)) };
-        edge.heat_loss =
-          static_cast<size_t>(data[static_cast<size_t>(dest_link.quot)][static_cast<size_t>(dest_link.rem)] - '0');
+        edge.heat_loss = static_cast<size_t>(
+          data[static_cast<size_t>(dest_link.quot)][static_cast<size_t>(dest_link.rem)] - '0');
         edges.emplace_back(edge);
       }
     }
@@ -67,62 +68,112 @@ constexpr size_t max_heat_loss{ std::numeric_limits<size_t>::max() };
 
 struct CityBlock
 {
-  size_t total_heat_loss{max_heat_loss};
-  size_t previous_block{max_block};
-  Heading going{Nowhere};
-  int previous_direction_count{0};
+  size_t total_heat_loss{ max_heat_loss };
+  size_t previous_block{ max_block };
+  Heading going{ Nowhere };
+  int steps{ 1 };
 };
 
 using CityBlockNode = std::pair<size_t, CityBlock>;
 
 struct CB_Comparitor
 {
-  bool operator() (const CityBlockNode &lhs, const CityBlockNode &rhs)
+  bool operator()(const CityBlockNode &lhs, const CityBlockNode &rhs) const
   {
     return (lhs.second.total_heat_loss > rhs.second.total_heat_loss);
   }
 };
 
+void print_visited(const std::vector<CityBlock> &city_blocks)
+{
 
-ShortestPaths energy_used(const City &city)
+  for (const auto &city_block : city_blocks) {
+    if (city_block.total_heat_loss == max_heat_loss) { continue; }
+    std::string going{};
+    switch (city_block.going) {
+    case North:
+      going = "North";
+      break;
+    case South:
+      going = "South";
+      break;
+    case East:
+      going = "East";
+      break;
+    case West:
+      going = "West";
+      break;
+    default:
+      going = "Nowhere";
+      break;
+    };
+
+    std::cout << std::format("Previous block: {}, Heat_loss: {}, Heading: {}, Steps: {}\n",
+      city_block.previous_block,
+      city_block.total_heat_loss,
+      going,
+      city_block.steps);
+  }
+}
+
+ShortestPaths energy_used(const City &city, const int min_steps, const int max_steps)
 {
   if (city.adj_list.empty()) { return {}; }
+  const size_t city_block_space{ 4 * static_cast<size_t>(max_steps) };// space for 4 directions and max_steps per direction.
+  const size_t block_count{ city.adj_list.size() };
 
   std::priority_queue<CityBlockNode, std::vector<CityBlockNode>, CB_Comparitor> city_block_pq;
 
-  std::vector<CityBlock> city_blocks(city.adj_list.size());
+  // visited blocks - reserve enought space for each block having 4 directions and up to 3 steps to
+  // reach it. 
+  std::vector<CityBlock> city_blocks(block_count * city_block_space);
   city_blocks[0].total_heat_loss = 0;
-  
+
   city_block_pq.emplace(0, city_blocks[0]);
 
-  while (!city_block_pq.empty()) 
-  {
-    auto city_block = city_block_pq.top();
+  while (!city_block_pq.empty()) {
+    auto [block_id, block_data] = city_block_pq.top();
     city_block_pq.pop();
-    size_t heat_loss_so_far = city_block.second.total_heat_loss;
-    for(auto adjacency : city.adj_list[city_block.first]) {
-      if(adjacency.dest == city_block.second.previous_block) {continue;}
-      Heading going{adjacency.heading};
-      Heading from{city_block.second.going};
-      int heading_count = (going != from) ? 1 : city_block.second.previous_direction_count +1;
-      if(heading_count > 3) {continue;}
+    const auto city_location{ block_id / city_block_space };
+    if (city_location == block_count -1) {
+       return { city_location, block_data.total_heat_loss }; }
 
-      size_t next_block{adjacency.dest};
-
-      size_t heat_loss_to_next_block = heat_loss_so_far + adjacency.heat_loss;
-      size_t next_block_heat_losses{city_blocks[next_block].total_heat_loss};
-      if((next_block_heat_losses == max_heat_loss) || (next_block_heat_losses > heat_loss_to_next_block)) {
-        city_blocks[next_block].total_heat_loss = heat_loss_to_next_block;
-        city_blocks[next_block].previous_block = city_block.first;
-        city_blocks[next_block].going = going;
-        city_blocks[next_block].previous_direction_count = heading_count;
-        city_block_pq.emplace(next_block, city_blocks[next_block]);
+    for (const auto &adjacency : city.adj_list[city_location]) {
+      const auto current_dir{block_data.going};
+      const auto next_heading{adjacency.heading};
+      if (adjacency.dest == max_block) { continue; }
+      if (current_dir != Nowhere && block_data.steps < min_steps && current_dir != next_heading) {continue;}
+      if (block_data.steps >= max_steps && current_dir == next_heading) { continue; }
+      switch (current_dir) {
+      case North:
+        if (next_heading == South) { continue; }
+        break;
+      case South:
+        if (next_heading == North) { continue; }
+        break;
+      case East:
+        if (next_heading == West) { continue; }
+        break;
+      case West:
+        if (next_heading == East) { continue; }
+        break;
+      default:
+        break;
       }
 
+      const size_t next_block_base{ adjacency.dest * city_block_space };
+      const int steps = (current_dir == next_heading) ? block_data.steps + 1 : 1;
+      const auto offset = static_cast<size_t>(next_heading * max_steps + steps - 1);
+      const size_t next_block_id{ next_block_base + offset };
+      const size_t next_block_heat_loss{ city_blocks[next_block_id].total_heat_loss };
+      const size_t heat_loss = block_data.total_heat_loss + adjacency.heat_loss;
+      if (next_block_heat_loss == max_heat_loss || heat_loss < next_block_heat_loss) {
+        CityBlock next_block{ heat_loss, block_id, next_heading, steps };
+        city_blocks[next_block_id] = next_block;
+        city_block_pq.emplace(next_block_id, next_block);
+      }
     }
-
   }
-  
 
   return {};
 }
