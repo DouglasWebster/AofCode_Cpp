@@ -19,17 +19,25 @@ int main()
 
   auto bricks{ get_bricks(puzzle_data) };
   drop_bricks(bricks);
-  for (const auto &brick : bricks) {
-    if(brick.grounded == false) {
-        std::cout << "A non grounded brick found\n";
+
+  const auto smashable{ count_smashable(bricks) };
+
+  int cascaded_sum{};
+  Counted counted{};
+
+  for (size_t index{ bricks.size() }; index > 0; --index) {
+    auto brick_id{ index - 1 };
+    if (!bricks[brick_id].smashable) {
+      auto cascaded{ count_chain_reaction(bricks[brick_id], bricks)}; //, counted) };
+      cascaded_sum += cascaded;
+      counted.emplace(brick_id, cascaded);
     }
   }
-  const auto smashable{ count_smashable(bricks) };
 
   std::cout << "Advent of Code " << AofCode_Cpp::cmake::campaign_year << " "
             << AofCode_Cpp::cmake::campaign_day << '\n';
-  std::cout << "Part 1 solution: Bricks that could be chosen: " <<smashable << '\n';
-  std::cout << "Part 2 solution:\n";
+  std::cout << "Part 1 solution: Bricks that could be chosen: " << smashable << '\n';
+  std::cout << "Part 2 solution: Total for cascaded bricks " << cascaded_sum << '\n';
 
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - time_start);

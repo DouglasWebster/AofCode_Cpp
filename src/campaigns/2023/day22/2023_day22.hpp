@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 #include <AofCode_Cpp/aoc_library.hpp>
 
@@ -46,6 +47,7 @@ public:
 
   size_t supports() const { return supporting.size(); }
   size_t rests_on() const { return resting_on.size();}
+  void mark_smashable() {smashable = true; }
 };
 
 using Bricks = std::vector<Brick>;
@@ -74,16 +76,16 @@ void drop_bricks(Bricks &bricks);
  */
 int count_smashable(Bricks &bricks);
 
-
-// A BrickLevelIndex encodes the index into the Bricks array, the level of that bricks base
-// and if it has been visited
-using BrickLevelIndex = std::tuple<size_t, size_t, bool>;
-using BrickLevelIndexes = std::vector<BrickLevelIndex>;
+using Counted = std::map<size_t, int>;
 
 /**
- * @brief Get the level for the base of each brick and sort them by descending value of level
+ * @brief given a brick count the number of other bricks that would fall if
+ * it were disintegrated
  * 
- * @param bricks 
- * @return BrickLevelIndexes 
+ * @param brick the source brick
+ * @param Bricks a vector of all the bricks
+ * @param countedc a map containing a list of bricks that have already been
+ * visited and the number of bricks that the will cascaded.
+ * @return int the number of OTHER bricks that will fall
  */
-BrickLevelIndexes index_brick_levels(const Bricks &bricks);
+int count_chain_reaction(const Brick &brick, const Bricks &bricks); //, Counted &counted);

@@ -1,5 +1,8 @@
 #include "2023_day22.hpp"
 #include <algorithm>
+#include <queue>
+#include <format>
+#include <numeric>
 
 D3Position parse_3d_vector(const std::string &co_ordinates)
 {
@@ -86,7 +89,7 @@ int count_smashable(Bricks &bricks)
     const auto above{ brick.supports() };
     if (above == 0) {
       ++smashable;
-      brick.smashable = true;
+      brick.mark_smashable();
       continue;
     }
     bool possible = true;
@@ -96,28 +99,47 @@ int count_smashable(Bricks &bricks)
         break;
       }
     }
-    if (possible) { ++smashable; 
-    brick.smashable = true;}
+    if (possible) {
+      ++smashable;
+      brick.mark_smashable();
+    }
   }
 
   return smashable;
 }
 
-BrickLevelIndexes index_brick_levels(const Bricks &bricks)
+int count_chain_reaction(const Brick &brick, const Bricks &bricks) //, Counted &counted)
 {
-  if (bricks.empty()) { return {}; }
+  if (bricks.empty()) { return 0; }
 
-  BrickLevelIndexes brick_indexes(bricks.size());
+  int cascaded_count{};
 
-  for (size_t index{}; index < bricks.size(); ++index) {
-    brick_indexes[index] = BrickLevelIndex{ index, bricks[index].min_pos.z_pos, false };
+  std::priority_queue<size_t, std::vector<size_t>, std::greater<size_t>> to_visit{};
+  for(const auto supported : brick.supporting) {
+    to_visit.push(supported);
   }
 
-  std::sort(brick_indexes.begin(),
-    brick_indexes.end(),
-    [](const BrickLevelIndex item_1, const BrickLevelIndex item_2) {
-      return std::get<1>(item_1) > std::get<1>(item_2);
-    });
+  // on_visit records if the brick has been visited and the remaining supports. 
+  using on_visit = std::pair<bool, size_t>;
+  constexpr auto max_supports{std::numeric_limits<size_t>::max()};
+  std::vector<on_visit> visited(bricks.size(), on_visit{false, max_supports});
 
-  return brick_indexes;
+  while(!to_visit.empty()) {
+    const auto next = to_visit.top();
+    to_visit.pop();
+    if(visited[next].first == true && visited[next].second == 0) {continue;}
+    if(visited[next].first == false) {
+      visited[next] = std::make_pair(true, bricks[next].rests_on());
+    }
+    --visited[next].second;
+    if(visited[next].second > 0) {continue;};
+    
+    ++cascaded_count;
+
+    for(const auto supported : bricks[next].supporting) {
+      to_visit.push(supported);
+    }
+  }
+
+  return cascaded_count;
 }
