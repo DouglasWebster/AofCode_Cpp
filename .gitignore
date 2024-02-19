@@ -38,3 +38,6 @@ InstructionTable.ods
 input*.txt
 
 
+src/campaigns/2023/day23/digraph.svg
+src/campaigns/2023/day23/digraph.txt
+src/campaigns/2023/day23/nodes.txt

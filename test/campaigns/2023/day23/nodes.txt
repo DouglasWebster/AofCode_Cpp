@@ -1,0 +1,6 @@
+ Node index:     1, Row:   1, Column:   2
+ Node index:    80, Row:   4, Column:  12
+ Node index:   118, Row:   6, Column:   4
+ Node index:   304, Row:  14, Column:   6
+ Node index:   312, Row:  14, Column:  14
+
